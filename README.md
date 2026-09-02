@@ -2,7 +2,7 @@
 
 AI-powered external-context verification for anomalous payment-risk events.
 
-**Status:** Repository initialized — application implementation has not started.
+**Status:** Day 1 complete — Backend foundation, risk event ingestion, Exa/Gemini integration scaffolding, 37 tests passing.
 
 ## Overview
 
@@ -150,11 +150,11 @@ razorpulse/
 ### Phase 0: Repository Initialization ✓
 Repository structure and development environment setup.
 
-### Phase 1: Razorpay Event Ingestion
-Webhook ingestion and risk event normalization.
+### Phase 1: Razorpay Event Ingestion ✓
+Simulated risk event ingestion and normalization.
 
-### Phase 2: Risk Anomaly Simulation
-Test harness for simulated anomalies.
+### Phase 2: Risk Anomaly Simulation ✓
+Synthetic test fixtures for simulated anomalies.
 
 ### Phase 3: Exa External-Event Discovery
 Integration with Exa AI for external event discovery.
@@ -241,4 +241,4 @@ For questions or collaboration, please see project documentation.
 
 ---
 
-**Note**: This repository is in initialization phase. No application logic has been implemented. Features and integrations are planned for upcoming phases.
+**Note**: Day 1 development is complete. See [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for current status and [docs/AI_HANDOFF.md](docs/AI_HANDOFF.md) for development context.
