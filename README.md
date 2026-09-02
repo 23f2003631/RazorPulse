@@ -2,7 +2,7 @@
 
 AI-powered external-context verification for anomalous payment-risk events.
 
-**Status:** Day 1 complete — Backend foundation, risk event ingestion, Exa/Gemini integration scaffolding, 37 tests passing.
+**Status:** Day 2 complete — Full investigation pipeline, Exa discovery, Gemini verification, deterministic ECI v1 engine, Evidence Dossier, Supabase persistence, 73 tests passing.
 
 ## Overview
 
@@ -23,7 +23,7 @@ External event discovery (Exa AI)
         ↓
 Evidence verification and interpretation (Gemini)
         ↓
-Deterministic corroboration-scoring engine
+Deterministic corroboration-scoring engine (ECI v1)
         ↓
 Human-readable risk evidence dossier
         ↓
@@ -45,8 +45,8 @@ Risk Analyst Dashboard
 
 ### Backend
 - **Framework**: FastAPI
-- **Language**: Python 3.10+
-- **Validation**: Pydantic
+- **Language**: Python 3.14
+- **Validation**: Pydantic v2
 - **Environment**: Python virtual environment
 
 ### Frontend
@@ -57,16 +57,16 @@ Risk Analyst Dashboard
 
 ### Database
 - **Primary**: Supabase (PostgreSQL)
-- **ORM**: SQLAlchemy (planned)
+- **Data Access**: supabase-py (direct client)
 
 ### AI / External Services
 - **External Intelligence**: Exa AI (web/event discovery)
-- **Evidence Interpretation**: Gemini (LLM-based verification)
-- **Scoring**: Deterministic Python rules engine
+- **Evidence Interpretation**: Google Gemini (`gemini-2.5-flash`, structured verification)
+- **Scoring**: Deterministic Python rules engine (ECI v1)
 
 ### DevOps
 - **Version Control**: Git / GitHub
-- **CI/CD**: GitHub Actions (planned)
+- **Testing**: pytest (73 automated tests)
 
 ## Repository Structure
 
@@ -78,11 +78,11 @@ razorpulse/
 ├── LICENSE                       # MIT or applicable license
 │
 ├── docs/                         # Documentation
-│   ├── architecture/             # System architecture docs
+│   ├── architecture/             # System architecture docs (ARCHITECTURE, DATA_MODEL, INVESTIGATION_PIPELINE, ECI_SCORING)
+│   ├── development/              # Development logs (DAY_1, DAY_2)
 │   ├── product/                  # Product requirements
 │   ├── security/                 # Security principles
-│   ├── api/                      # API specifications
-│   └── evaluation/               # Evaluation methodology
+│   └── api/                      # API specifications
 │
 ├── backend/                      # FastAPI backend
 │   ├── README.md
@@ -90,59 +90,27 @@ razorpulse/
 │   ├── .env.example
 │   ├── app/
 │   │   ├── main.py              # Application entry point
-│   │   ├── config/              # Configuration
-│   │   ├── api/routes/          # API route definitions
-│   │   ├── models/              # SQLAlchemy models
-│   │   ├── schemas/             # Pydantic schemas
-│   │   ├── services/            # Business logic
-│   │   │   ├── razorpay/        # Razorpay integration
-│   │   │   ├── exa/             # Exa discovery service
-│   │   │   ├── gemini/          # Gemini verification
-│   │   │   ├── scoring/         # Corroboration scoring
-│   │   │   └── investigation/   # Investigation orchestration
-│   │   ├── repositories/        # Data access layer
+│   │   ├── config/              # Configuration & settings
+│   │   ├── api/routes/          # API route definitions (health, risk_events, investigations, integrations)
+│   │   ├── schemas/             # Pydantic schemas (evidence, verification, eci, dossier, investigation)
+│   │   ├── services/            # Business logic (exa, gemini, scoring, investigation)
+│   │   ├── repositories/        # Data access layer (merchant, risk_event, investigation)
 │   │   ├── core/                # Core utilities (exceptions, logging)
 │   │   └── utils/               # Helper functions
 │   ├── tests/
-│   │   ├── unit/                # Unit tests
-│   │   ├── integration/         # Integration tests
-│   │   └── fixtures/            # Test fixtures
-│   └── scripts/                 # Utility scripts
-│
-├── frontend/                     # Next.js frontend
-│   ├── README.md
-│   ├── package.json
-│   ├── tsconfig.json
-│   ├── next.config.ts
-│   ├── app/                     # Next.js App Router
-│   ├── components/              # React components
-│   ├── lib/                     # Utility libraries
-│   ├── hooks/                   # Custom React hooks
-│   ├── types/                   # TypeScript type definitions
-│   ├── services/                # API and external services
-│   └── public/                  # Static assets
+│   │   ├── unit/                # Unit tests (config, schemas, query gen, normalizer, ECI invariants, verifier, dossier)
+│   │   ├── integration/         # Integration tests (health, risk_events, investigations API, pipeline E2E)
+│   │   └── fixtures/            # Test fixtures (risk events, synthetic scenarios)
+│   └── scripts/                 # Live smoke tests (smoke_test_exa, smoke_test_gemini, smoke_test_pipeline)
 │
 ├── database/                     # Database schema and migrations
-│   ├── README.md
-│   ├── migrations/              # Alembic migrations
-│   ├── schemas/                 # Schema definitions
-│   └── seed/                    # Seed data
+│   ├── schemas/                 # SQL schemas (001_initial_schema.sql, 002_investigations_schema.sql)
 │
-├── evaluation/                   # Benchmark and evaluation suite
-│   ├── README.md
+├── evaluation/                   # Benchmark and evaluation suite (Day 3)
 │   ├── datasets/                # Benchmark datasets
-│   ├── experiments/             # Experiment definitions
-│   ├── results/                 # Experiment results
-│   └── reports/                 # Analysis reports
+│   └── experiments/             # Experiment definitions
 │
-├── data/                         # Data directory
-│   ├── raw/                     # Raw data
-│   ├── processed/               # Processed data
-│   └── synthetic/               # Synthetic test data
-│
-├── scripts/                      # Repository-level scripts
-│
-└── .github/workflows/            # CI/CD workflows
+└── data/                         # Data directory (synthetic test data)
 ```
 
 ## Development Phases
@@ -156,23 +124,23 @@ Simulated risk event ingestion and normalization.
 ### Phase 2: Risk Anomaly Simulation ✓
 Synthetic test fixtures for simulated anomalies.
 
-### Phase 3: Exa External-Event Discovery
-Integration with Exa AI for external event discovery.
+### Phase 3: Exa External-Event Discovery ✓
+Bounded multi-intent query generation, semantic search, evidence normalization, and URL deduplication.
 
-### Phase 4: Gemini Evidence Verification
-LLM-based evidence verification and interpretation.
+### Phase 4: Gemini Evidence Verification ✓
+Anti-hallucination prompt and structured Pydantic assessment for entity match, timing, explanation support, credibility, and contradictions.
 
-### Phase 5: Deterministic Corroboration Engine
-Rules-based scoring and corroboration.
+### Phase 5: Deterministic Corroboration Engine ✓
+Deterministic ECI v1 heuristic scoring engine with transparent factor breakdown and 10 score invariants verified.
 
-### Phase 6: Supabase Persistence
-PostgreSQL schema and data access layer.
+### Phase 6: Supabase Persistence ✓
+PostgreSQL schema migrations (001, 002) and repository CRUD for investigations and dossiers.
 
 ### Phase 7: Risk Analyst Dashboard
-Frontend UI for investigation and decision-making.
+Frontend UI for investigation and decision-making (Next.js).
 
 ### Phase 8: Evaluation Benchmark
-Precision, recall, citation correctness metrics.
+Precision, recall, citation correctness metrics on held-out test sets.
 
 ### Phase 9: Adversarial Testing
 Robustness and edge-case testing.
