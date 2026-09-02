@@ -11,8 +11,19 @@ Secrets are NEVER hard-coded or logged.
 from functools import lru_cache
 from typing import Optional
 
+from pathlib import Path
+
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+# Determine backend directory and project root directory relative to this file
+_BACKEND_DIR = Path(__file__).resolve().parent.parent.parent
+_ROOT_DIR = _BACKEND_DIR.parent
+
+# Env file precedence: root .env loaded first, then backend/.env overrides it
+_ENV_FILES = [
+    str(f) for f in [_ROOT_DIR / ".env", _BACKEND_DIR / ".env"] if f.exists()
+] or [".env"]
 
 
 class Settings(BaseSettings):
@@ -24,7 +35,7 @@ class Settings(BaseSettings):
     """
 
     model_config = SettingsConfigDict(
-        env_file=".env",
+        env_file=_ENV_FILES,
         env_file_encoding="utf-8",
         case_sensitive=True,
         extra="ignore",

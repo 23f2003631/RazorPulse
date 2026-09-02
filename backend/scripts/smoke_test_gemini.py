@@ -17,13 +17,27 @@ REQUIREMENTS:
 import sys
 import os
 
-# Add backend to path
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Add backend to path and resolve env paths
+BACKEND_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT_DIR = os.path.dirname(BACKEND_DIR)
+sys.path.insert(0, BACKEND_DIR)
+
+if sys.platform == "win32":
+    try:
+        sys.stdout.reconfigure(encoding="utf-8")
+        sys.stderr.reconfigure(encoding="utf-8")
+    except Exception:
+        pass
 
 from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
+# Load environment variables: root .env first, then backend/.env overrides it
+root_env = os.path.join(ROOT_DIR, ".env")
+backend_env = os.path.join(BACKEND_DIR, ".env")
+if os.path.exists(root_env):
+    load_dotenv(dotenv_path=root_env)
+if os.path.exists(backend_env):
+    load_dotenv(dotenv_path=backend_env, override=True)
 
 
 def main():
