@@ -59,7 +59,11 @@ class Settings(BaseSettings):
 
     # --- Gemini (SECRET) ---
     GEMINI_API_KEY: Optional[str] = Field(default=None, description="SECRET: Google Gemini API Key")
-    GEMINI_MODEL: str = Field(default="gemini-2.5-flash", description="Gemini model name for evidence verification")
+    GEMINI_MODEL: str = Field(default="gemini-3.5-flash-lite", description="Gemini model name for evidence verification")
+    GEMINI_MAX_EVIDENCE_ITEMS: int = Field(
+        default=4,
+        description="Maximum number of evidence items to verify with Gemini per investigation (default: 4)",
+    )
 
     # --- Supabase ---
     SUPABASE_URL: Optional[str] = Field(default=None, description="Supabase project URL")

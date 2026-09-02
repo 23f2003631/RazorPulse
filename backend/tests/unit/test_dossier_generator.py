@@ -6,6 +6,7 @@ from uuid import uuid4
 import pytest
 
 from app.schemas.eci import ECIBand, ECIScoreResult
+from app.schemas.evidence import NormalizedEvidence, SourceType
 from app.services.investigation.dossier_generator import DossierGenerator
 from app.services.scoring.eci_engine import ECIEngine
 from tests.fixtures.synthetic_scenarios import (
@@ -107,3 +108,71 @@ class TestDossierGenerator:
         assert "refutes" in dossier.contradictions[0]
         # Checklist should prompt checking the discrepancy
         assert any("discrepancy" in item.lower() for item in dossier.analyst_review_checklist)
+
+    def test_generate_dossier_with_partial_and_failed_verification(self):
+        """Dossier with partial verification only includes citations for VERIFIED items and notes gaps."""
+        from app.schemas.evidence import SourceType
+        from app.schemas.verification import (
+            EvidenceStrength,
+            EvidenceVerificationItem,
+            ExplanationSupportLevel,
+            MerchantMatchLevel,
+            SourceCredibilityLevel,
+            TemporalMatchLevel,
+            VerificationStatus,
+        )
+
+        inv_id = uuid4()
+        ev1_id, ev2_id = uuid4(), uuid4()
+
+        items = [
+            NormalizedEvidence(evidence_id=ev1_id, url="https://d1.com", title="T1", source_domain="d1.com", source_type=SourceType.NEWS_MEDIA, discovery_query="q1", discovery_query_intent="i1"),
+            NormalizedEvidence(evidence_id=ev2_id, url="https://d2.com", title="T2", source_domain="d2.com", source_type=SourceType.NEWS_MEDIA, discovery_query="q2", discovery_query_intent="i2"),
+        ]
+
+        verified_item = EvidenceVerificationItem(
+            evidence_id=ev1_id,
+            status=VerificationStatus.VERIFIED,
+            merchant_match=MerchantMatchLevel.DIRECT_MATCH,
+            temporal_match=TemporalMatchLevel.EXACT_MATCH,
+            explanation_support=ExplanationSupportLevel.STRONG_EXPLANATION,
+            evidence_strength=EvidenceStrength.STRONG_DIRECT,
+            source_credibility=SourceCredibilityLevel.HIGH,
+            key_facts=["Sale confirmed"],
+            reasoning_summary="Verified",
+        )
+        failed_item = EvidenceVerificationItem(
+            evidence_id=ev2_id,
+            status=VerificationStatus.FAILED,
+            failure_reason="429 quota error",
+            reasoning_summary="Verification failed due to quota limit",
+        )
+
+        v_res = VerificationResult(
+            investigation_id=inv_id,
+            items=[verified_item, failed_item],
+            overall_contradictions=[],
+            overall_uncertainties=["Gemini quota limit reached for item 2"],
+            verified_at_timestamp="now",
+        )
+        eci_res = ECIEngine.calculate_eci(v_res, items)
+
+        dossier = DossierGenerator.generate_dossier(
+            investigation_id=inv_id,
+            risk_event=SCENARIO_1_RISK_EVENT,
+            evidence_items=items,
+            verification_result=v_res,
+            eci_result=eci_res,
+            executed_queries=[],
+        )
+
+        # Only 1 citation generated for the 1 verified item
+        assert len(dossier.evidence_citations) == 1
+        assert dossier.evidence_citations[0].evidence_id == ev1_id
+
+        # Executive summary reports 2 discovered, 1 verified
+        assert "2 external evidence item(s)" in dossier.executive_summary
+        assert "(1 verified)" in dossier.executive_summary
+
+        # Evidence gaps explicitly note provider limits
+        assert any("could not be verified by Gemini" in gap for gap in dossier.evidence_gaps)

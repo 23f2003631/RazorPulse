@@ -71,9 +71,9 @@ Human Risk Analyst API (GET /api/v1/investigations/{id})
   - `GET /api/v1/integrations/gemini/health` — Gemini live connectivity check
 - **Services:**
   - `services/exa/` — Client wrapper, QueryIntentBuilder, normalizer with URL deduplication, ExaSearchStrategy
-  - `services/gemini/` — Client wrapper (`gemini-2.5-flash`), anti-hallucination verification prompt, GeminiVerifier with Pydantic structured output
-  - `services/scoring/` — Deterministic ECIEngine (v1 heuristic)
-  - `services/investigation/` — DossierGenerator, InvestigationOrchestrator
+  - `services/gemini/` — Client wrapper (`gemini-3.5-flash-lite`), batch evidence verification prompt, GeminiVerifier with deterministic selection (`GEMINI_MAX_EVIDENCE_ITEMS=4`) and `BatchEvidenceVerificationResponse` structured schema, centralized `with_gemini_retry` with server `retryDelay` respect and daily quota fast-fail
+  - `services/scoring/` — Deterministic ECIEngine (v1 heuristic, scoring strictly VERIFIED items)
+  - `services/investigation/` — DossierGenerator (citations only for verified items), InvestigationOrchestrator
   - `services/risk_event_service.py` — Risk event ingestion logic
 - **Repositories:**
   - `repositories/merchant_repository.py` — Merchant find-or-create by domain
@@ -81,7 +81,7 @@ Human Risk Analyst API (GET /api/v1/investigations/{id})
   - `repositories/investigation_repository.py` — Investigation CRUD and structured persistence
 - **Schemas:**
   - `schemas/evidence.py` — SourceType, NormalizedEvidence, canonicalize_url
-  - `schemas/verification.py` — Match levels, EvidenceVerificationItem, VerificationResult
+  - `schemas/verification.py` — VerificationStatus (VERIFIED, FAILED, SKIPPED), Match levels, EvidenceVerificationItem, BatchEvidenceVerificationResponse, VerificationResult
   - `schemas/eci.py` — ECIBand, ECIFactorCategory, ECIFactorContribution, ECIScoreResult
   - `schemas/dossier.py` — AnomalySummary, EvidenceCitation, EvidenceDossier
   - `schemas/investigation.py` — InvestigationStatus, InvestigationCreate, InvestigationResponse, InvestigationDetailResponse
@@ -89,23 +89,24 @@ Human Risk Analyst API (GET /api/v1/investigations/{id})
   - `001_initial_schema.sql` — Initial tables: merchants, risk_events, investigations + RLS
   - `002_investigations_schema.sql` — Migration adding structured ECI, dossier, and evidence columns
 
-### Tests (73 automated tests, all passing)
-- 12 Config unit tests
+### Tests (98 automated tests, 100% passing)
+- 13 Config unit tests
 - 14 Schema validation unit tests
 - 4 Health endpoint integration tests
 - 7 Risk event endpoint integration tests
 - 5 Query generation unit tests
 - 6 Evidence normalization & deduplication unit tests
-- 3 Gemini verifier unit tests
-- 10 ECI Engine unit tests validating all 10 Score Invariants
-- 3 Dossier generator unit tests
+- 5 Gemini verifier unit tests
+- 18 Gemini retry, delay, and quota handling unit tests
+- 12 ECI Engine unit tests validating all 10 Score Invariants + partial/unverified cases
+- 4 Dossier generator unit tests
 - 6 Investigation API endpoint integration tests
-- 3 Full end-to-end pipeline execution tests
+- 4 Full end-to-end pipeline execution tests
 
 ### Live Scripts
 - `backend/scripts/smoke_test_exa.py` — Exa live test
-- `backend/scripts/smoke_test_gemini.py` — Gemini live test
-- `backend/scripts/smoke_test_pipeline.py` — Complete end-to-end live pipeline test
+- `backend/scripts/smoke_test_gemini.py` — Gemini live test (`gemini-3.5-flash-lite`)
+- `backend/scripts/smoke_test_pipeline.py` — Complete end-to-end live pipeline test (Exa discovery + batch Gemini verification)
 
 ## Next Task (Day 3)
 

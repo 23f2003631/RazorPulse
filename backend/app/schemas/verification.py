@@ -62,6 +62,13 @@ class SourceCredibilityLevel(str, Enum):
     UNKNOWN = "unknown"  # Cannot ascertain credibility from snippet
 
 
+class VerificationStatus(str, Enum):
+    """Execution status of evidence verification."""
+    VERIFIED = "verified"    # Successfully verified by Gemini
+    FAILED = "failed"        # Verification failed (e.g. quota limit, model error)
+    SKIPPED = "skipped"      # Skipped from LLM verification (e.g. exceeded top N threshold)
+
+
 class EvidenceVerificationItem(BaseModel):
     """
     Structured verification assessment of a single evidence item.
@@ -73,24 +80,32 @@ class EvidenceVerificationItem(BaseModel):
         ...,
         description="ID of the evidence item being evaluated (provenance link)",
     )
+    status: VerificationStatus = Field(
+        default=VerificationStatus.VERIFIED,
+        description="Verification execution status (verified, failed, or skipped)",
+    )
+    failure_reason: Optional[str] = Field(
+        default=None,
+        description="Reason for verification failure if status=FAILED",
+    )
     merchant_match: MerchantMatchLevel = Field(
-        ...,
+        default=MerchantMatchLevel.UNCERTAIN,
         description="Assessment of entity identity match",
     )
     temporal_match: TemporalMatchLevel = Field(
-        ...,
+        default=TemporalMatchLevel.UNCERTAIN,
         description="Assessment of temporal alignment with anomaly occurred_at",
     )
     explanation_support: ExplanationSupportLevel = Field(
-        ...,
+        default=ExplanationSupportLevel.UNCERTAIN,
         description="Assessment of how well evidence explains the surge anomaly",
     )
     evidence_strength: EvidenceStrength = Field(
-        ...,
+        default=EvidenceStrength.WEAK_CIRCUMSTANTIAL,
         description="Directness and evidentiary strength of the source content",
     )
     source_credibility: SourceCredibilityLevel = Field(
-        ...,
+        default=SourceCredibilityLevel.UNKNOWN,
         description="Assessed credibility level of the reporting source",
     )
     event_category: Optional[str] = Field(
@@ -110,8 +125,20 @@ class EvidenceVerificationItem(BaseModel):
         description="Missing information or ambiguities noted in the text",
     )
     reasoning_summary: str = Field(
-        ...,
+        default="Pending verification",
         description="Concise synthesis explaining the verification assessment",
+    )
+
+
+class BatchEvidenceVerificationResponse(BaseModel):
+    """
+    Batch structured verification response schema from Gemini.
+
+    Allows all selected evidence items for an investigation to be evaluated in a single API call.
+    """
+    verifications: list[EvidenceVerificationItem] = Field(
+        default_factory=list,
+        description="List of structured verification assessments for each evidence item",
     )
 
 
@@ -123,7 +150,7 @@ class VerificationResult(BaseModel):
     investigation_id: UUID = Field(..., description="Investigation ID")
     items: list[EvidenceVerificationItem] = Field(
         default_factory=list,
-        description="Individual evidence item assessments",
+        description="Individual evidence item assessments (verified, failed, or skipped)",
     )
     overall_contradictions: list[str] = Field(
         default_factory=list,

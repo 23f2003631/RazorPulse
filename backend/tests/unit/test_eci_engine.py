@@ -412,3 +412,99 @@ class TestECIEngineScoreInvariants:
         assert res2.eci_score == 0
         assert res2.is_zero_evidence is True
         assert res3.penalty_points > 0  # Contradiction penalty applied
+
+    def test_zero_verified_evidence_with_discovered_items_produces_zero_eci(self):
+        """When Exa discovers items but all verifications fail/skip, ECI must be 0 and Band LOW."""
+        from app.schemas.verification import VerificationStatus
+        ev_id = uuid4()
+        items = [
+            NormalizedEvidence(
+                evidence_id=ev_id,
+                url="https://example.com/item",
+                title="Example",
+                source_domain="example.com",
+                source_type=SourceType.NEWS_MEDIA,
+                discovery_query="example query",
+                discovery_query_intent="test_intent",
+            )
+        ]
+        v_res = VerificationResult(
+            investigation_id=uuid4(),
+            items=[
+                EvidenceVerificationItem(
+                    evidence_id=ev_id,
+                    status=VerificationStatus.FAILED,
+                    failure_reason="429 ResourceExhausted",
+                    reasoning_summary="Verification failed",
+                )
+            ],
+            overall_contradictions=[],
+            overall_uncertainties=["Gemini provider quota exhausted"],
+            verified_at_timestamp="now",
+        )
+
+        res = ECIEngine.calculate_eci(v_res, items)
+        assert res.eci_score == 0
+        assert res.band == ECIBand.LOW
+        assert res.is_zero_evidence is True
+        assert res.positive_points == 0.0
+
+    def test_partial_verification_scores_only_verified_items(self):
+        """When 2 items are VERIFIED and 2 items are FAILED, only the 2 verified items contribute."""
+        from app.schemas.verification import VerificationStatus
+        ev1_id, ev2_id, ev3_id, ev4_id = uuid4(), uuid4(), uuid4(), uuid4()
+
+        items = [
+            NormalizedEvidence(evidence_id=ev1_id, url="https://d1.com/1", title="T1", source_domain="d1.com", source_type=SourceType.NEWS_MEDIA, discovery_query="q1", discovery_query_intent="intent1"),
+            NormalizedEvidence(evidence_id=ev2_id, url="https://d2.com/2", title="T2", source_domain="d2.com", source_type=SourceType.NEWS_MEDIA, discovery_query="q2", discovery_query_intent="intent2"),
+            NormalizedEvidence(evidence_id=ev3_id, url="https://d3.com/3", title="T3", source_domain="d3.com", source_type=SourceType.GENERAL_WEB, discovery_query="q3", discovery_query_intent="intent3"),
+            NormalizedEvidence(evidence_id=ev4_id, url="https://d4.com/4", title="T4", source_domain="d4.com", source_type=SourceType.GENERAL_WEB, discovery_query="q4", discovery_query_intent="intent4"),
+        ]
+
+        verified_1 = EvidenceVerificationItem(
+            evidence_id=ev1_id,
+            status=VerificationStatus.VERIFIED,
+            merchant_match=MerchantMatchLevel.DIRECT_MATCH,
+            temporal_match=TemporalMatchLevel.EXACT_MATCH,
+            explanation_support=ExplanationSupportLevel.STRONG_EXPLANATION,
+            evidence_strength=EvidenceStrength.STRONG_DIRECT,
+            source_credibility=SourceCredibilityLevel.HIGH,
+            key_facts=["Viral sale confirmed"],
+            reasoning_summary="Verified",
+        )
+        verified_2 = EvidenceVerificationItem(
+            evidence_id=ev2_id,
+            status=VerificationStatus.VERIFIED,
+            merchant_match=MerchantMatchLevel.DIRECT_MATCH,
+            temporal_match=TemporalMatchLevel.WINDOW_MATCH,
+            explanation_support=ExplanationSupportLevel.MODERATE_EXPLANATION,
+            evidence_strength=EvidenceStrength.MODERATE_INDIRECT,
+            source_credibility=SourceCredibilityLevel.HIGH,
+            key_facts=["Sale covered"],
+            reasoning_summary="Verified",
+        )
+        failed_3 = EvidenceVerificationItem(
+            evidence_id=ev3_id,
+            status=VerificationStatus.FAILED,
+            failure_reason="429 quota error",
+            reasoning_summary="Failed",
+        )
+        skipped_4 = EvidenceVerificationItem(
+            evidence_id=ev4_id,
+            status=VerificationStatus.SKIPPED,
+            reasoning_summary="Skipped",
+        )
+
+        v_res = VerificationResult(
+            investigation_id=uuid4(),
+            items=[verified_1, verified_2, failed_3, skipped_4],
+            overall_contradictions=[],
+            overall_uncertainties=[],
+            verified_at_timestamp="now",
+        )
+
+        res = ECIEngine.calculate_eci(v_res, items)
+        # Factor 1 (Entity): 25, Factor 2 (Temporal): 25, Factor 3 (Support): 20, Factor 4 (Source): 20, Factor 5 (Corrob 2 domains): +5 -> Total = 95
+        assert res.eci_score == 95
+        assert res.positive_points == 95.0
+        assert res.band == ECIBand.VERY_STRONG

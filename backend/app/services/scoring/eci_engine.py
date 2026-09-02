@@ -30,6 +30,7 @@ from app.schemas.verification import (
     SourceCredibilityLevel,
     TemporalMatchLevel,
     VerificationResult,
+    VerificationStatus,
 )
 
 
@@ -59,25 +60,35 @@ class ECIEngine:
         """
         # Map evidence items by ID for quick domain/URL lookup
         evidence_by_id = {ev.evidence_id: ev for ev in evidence_items}
-        verified_items = verification_result.items
+        
+        # Filter to only successfully verified items (FAILED and SKIPPED cannot award positive points)
+        verified_items = [
+            item for item in verification_result.items
+            if getattr(item, "status", VerificationStatus.VERIFIED) == VerificationStatus.VERIFIED
+        ]
 
-        # --- Handle Zero Evidence Case ---
+        # --- Handle Zero Verified Evidence Case ---
         if not verified_items:
+            has_unverified = len(evidence_items) > 0
             zero_factor = ECIFactorContribution(
-                factor_id="zero_evidence",
+                factor_id="zero_verified_evidence",
                 category=ECIFactorCategory.EXPLANATION_SUPPORT,
-                name="No External Evidence Found",
-                raw_value="zero_evidence",
+                name="No Verified External Evidence" if has_unverified else "No External Evidence Found",
+                raw_value="zero_verified_evidence",
                 points_awarded=0.0,
                 max_possible_points=100.0,
-                explanation="No relevant external public web evidence was discovered for this merchant and timeframe.",
+                explanation=(
+                    f"External evidence was discovered ({len(evidence_items)} item(s)), but none was successfully verified."
+                    if has_unverified
+                    else "No relevant external public web evidence was discovered for this merchant and timeframe."
+                ),
                 evidence_ids=[],
             )
             return ECIScoreResult(
                 eci_score=0,
                 band=ECIBand.LOW,
                 band_label="Low External Corroboration",
-                confidence_level="HIGH",
+                confidence_level="LOW" if has_unverified else "HIGH",
                 eci_version=cls.ECI_VERSION,
                 positive_points=0.0,
                 penalty_points=0.0,

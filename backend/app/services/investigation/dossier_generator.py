@@ -17,7 +17,7 @@ from app.schemas.dossier import (
 )
 from app.schemas.eci import ECIScoreResult
 from app.schemas.evidence import NormalizedEvidence
-from app.schemas.verification import VerificationResult
+from app.schemas.verification import VerificationResult, VerificationStatus
 
 
 class DossierGenerator:
@@ -61,6 +61,8 @@ class DossierGenerator:
         else:
             occurred_at_dt = datetime.now(timezone.utc)
 
+        risk_reason = risk_event.get("risk_reason")
+
         # 1. Anomaly Summary Snapshot
         anomaly_summary = AnomalySummary(
             risk_event_id=UUID(str(risk_event["id"])),
@@ -73,15 +75,29 @@ class DossierGenerator:
             percentage_change=risk_event.get("percentage_change"),
             transaction_amount=risk_event.get("transaction_amount"),
             currency=str(risk_event.get("currency", "INR")),
-            risk_reason=risk_event.get("risk_reason"),
+            risk_reason=risk_reason,
             geographic_info=risk_event.get("geographic_info"),
         )
 
-        # 2. Build Evidence Citations
+        # 2. Categorize items by status
+        verified_items = [
+            item for item in verification_result.items
+            if getattr(item, "status", VerificationStatus.VERIFIED) == VerificationStatus.VERIFIED
+        ]
+        failed_items = [
+            item for item in verification_result.items
+            if getattr(item, "status", None) == VerificationStatus.FAILED
+        ]
+        skipped_items = [
+            item for item in verification_result.items
+            if getattr(item, "status", None) == VerificationStatus.SKIPPED
+        ]
+
+        # 3. Build Evidence Citations (Only for VERIFIED items)
         citations: list[EvidenceCitation] = []
         evidence_by_id = {ev.evidence_id: ev for ev in evidence_items}
 
-        for idx, item in enumerate(verification_result.items, start=1):
+        for idx, item in enumerate(verified_items, start=1):
             ev = evidence_by_id.get(item.evidence_id)
             if ev:
                 first_fact = item.key_facts[0] if item.key_facts else item.reasoning_summary
@@ -99,23 +115,34 @@ class DossierGenerator:
                     )
                 )
 
-        # 3. Executive Summary
+        # 4. Executive Summary
         executive_summary = cls._generate_executive_summary(
             merchant_name=merchant_name,
             anomaly_summary=anomaly_summary,
             eci_result=eci_result,
             evidence_count=len(evidence_items),
+            verified_count=len(verified_items),
+            failed_count=len(failed_items),
             contradictions=verification_result.overall_contradictions,
         )
 
-        # 4. Gaps and Uncertainties
+        # 5. Gaps and Uncertainties
         evidence_gaps: list[str] = []
         if len(evidence_items) == 0:
             evidence_gaps.append("No public external coverage, press release, or merchant announcement found for this anomaly period.")
-        elif len(evidence_items) == 1:
-            evidence_gaps.append("Only a single source discovered; lacks independent multi-domain corroboration.")
+        elif len(verified_items) == 0 and len(evidence_items) > 0:
+            evidence_gaps.append(
+                f"External evidence was discovered ({len(evidence_items)} item(s)), but Gemini verification was incomplete due to provider limitations."
+            )
+        else:
+            if failed_items:
+                evidence_gaps.append(f"{len(failed_items)} discovered item(s) could not be verified by Gemini due to provider limits.")
+            if skipped_items:
+                evidence_gaps.append(f"{len(skipped_items)} lower-priority item(s) were skipped from LLM verification to optimize processing efficiency.")
+            if len(verified_items) == 1:
+                evidence_gaps.append("Only a single source was verified; lacks independent multi-domain corroboration.")
 
-        # 5. Analyst Review Checklist
+        # 6. Analyst Review Checklist
         checklist = cls._build_review_checklist(
             anomaly_summary=anomaly_summary,
             eci_result=eci_result,
@@ -146,10 +173,19 @@ class DossierGenerator:
         anomaly_summary: AnomalySummary,
         eci_result: ECIScoreResult,
         evidence_count: int,
+        verified_count: int,
+        failed_count: int,
         contradictions: list[str],
     ) -> str:
         pct_text = f"+{anomaly_summary.percentage_change}%" if anomaly_summary.percentage_change else "anomalous"
         if eci_result.is_zero_evidence:
+            if failed_count > 0:
+                return (
+                    f"RazorPulse discovered {evidence_count} external evidence item(s) for {merchant_name}, "
+                    f"but Gemini verification could not be completed due to provider quota/availability constraints. "
+                    f"External Corroboration is Low (ECI: 0/100). "
+                    f"The analyst should proceed with standard internal verification."
+                )
             return (
                 f"RazorPulse investigated an observed {pct_text} surge in transaction activity for {merchant_name} "
                 f"on {anomaly_summary.occurred_at.strftime('%Y-%m-%d')}. "
@@ -160,7 +196,7 @@ class DossierGenerator:
 
         if eci_result.eci_score >= 60:
             summary = (
-                f"RazorPulse discovered {evidence_count} external evidence item(s) for {merchant_name}. "
+                f"RazorPulse discovered {evidence_count} external evidence item(s) for {merchant_name} ({verified_count} verified). "
                 f"Verified evidence indicates a public real-world event matching the timing of the {pct_text} transaction anomaly. "
                 f"Event Corroboration Index is {eci_result.eci_score}/100 ({eci_result.band_label})."
             )
@@ -170,13 +206,13 @@ class DossierGenerator:
 
         if eci_result.eci_score >= 30:
             return (
-                f"RazorPulse discovered {evidence_count} external evidence item(s) relating to {merchant_name}. "
-                f"Discovered items provide moderate contextual context but exhibit minor temporal or entity ambiguity. "
+                f"RazorPulse discovered {evidence_count} external evidence item(s) relating to {merchant_name} ({verified_count} verified). "
+                f"Verified items provide moderate contextual context but exhibit minor temporal or entity ambiguity. "
                 f"Event Corroboration Index is {eci_result.eci_score}/100 ({eci_result.band_label})."
             )
 
         return (
-            f"RazorPulse discovered {evidence_count} external evidence item(s) for {merchant_name}, "
+            f"RazorPulse discovered {evidence_count} external evidence item(s) for {merchant_name} ({verified_count} verified), "
             f"but verification indicates weak, unaligned, or contradicted contextual connection to the transaction anomaly. "
             f"Event Corroboration Index is {eci_result.eci_score}/100 ({eci_result.band_label})."
         )

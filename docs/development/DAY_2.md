@@ -40,15 +40,21 @@ Build and verify the first end-to-end RazorPulse Investigation Pipeline:
   - `IDENTITY_CONTEXT`: General brand background and corporate profile.
 - `ExaSearchStrategy`: Executes multi-intent searches with per-query error resilience, normalizes raw results, and deduplicates canonical URLs.
 
-### 4. Gemini Evidence Verifier & Resilience
-- **Model**: `gemini-3.6-flash` using official unified `google-genai` SDK (v2.21.0).
-- **Typed Configuration**: Uses typed `types.GenerateContentConfig` for structured output with Pydantic schemas (`response_schema=EvidenceVerificationItem`).
+### 4. Gemini Evidence Verifier & Batch Optimization
+- **Model**: `gemini-3.5-flash-lite` using official unified `google-genai` SDK (v2.21.0). Configurable via `GEMINI_MODEL`.
+- **Call Reduction & Selection**: Deterministically selects top $N$ evidence items (`GEMINI_MAX_EVIDENCE_ITEMS=4`) using `select_top_evidence` based on source credibility, highlights density, relevance score, and snippet length. Remaining items are marked `SKIPPED`.
+- **Single-Batch Verification**: Bundles all selected items into ONE structured request using `BatchEvidenceVerificationResponse`, slashing Gemini call volume from $O(N)$ (e.g. 9 calls) down to 1 call per investigation.
+- **Typed Configuration**: Uses typed `types.GenerateContentConfig` for structured output with Pydantic schemas.
 - **Anti-Hallucination Prompt**: `VERIFICATION_SYSTEM_INSTRUCTION` forces strict evidence grounding in provided text snippets, explicit distinction between factual proof and plausibility, explicit contradiction detection, and neutral non-fraud terminology.
-- **Transient Retry Wrapper**: `with_gemini_retry` provides bounded exponential backoff (max 3 attempts with 2s, 4s delays) for transient provider errors (`503 UNAVAILABLE`, `429 RESOURCE_EXHAUSTED`). Non-transient errors (400, 401, 403, 404, validation errors) fail immediately.
-- **Fallback & Error Stage**: Handles item evaluation exceptions gracefully; persistent 503 provider outages after retry exhaustion fail cleanly with `FAILED` status and `error_stage="verifying"`.
+- **Transient Retry & Quota Handling**:
+  - `extract_retry_delay`: Respects server-provided `retryDelay` headers on 429s (e.g. 45s, 55s) instead of tight retry loops.
+  - `is_daily_quota_exhaustion_error`: Detects hard daily quota limits (`GenerateRequestsPerDay`, `generate_content_free_tier_requests`) and fails immediately on attempt 1 without retrying.
+  - `with_gemini_retry`: Bounded exponential backoff (max 3 attempts with 2s, 4s delays) for transient provider errors (`503 UNAVAILABLE`, `504 DEADLINE_EXCEEDED`). Non-transient errors (400, 401, 403, 404, validation errors) fail immediately.
+- **Graceful Partial Failure & Zero-Evidence State**: If Gemini encounters errors, selected items are marked `FAILED` (with `failure_reason`), and downstream ECI awards 0 positive points. Zero verified items produces ECI = 0 / Low External Corroboration.
 
 ### 5. Deterministic ECI v1 Heuristic Engine
 - Implemented pure Python rule engine (`app/services/scoring/eci_engine.py`) calculating ECI bounded to `[0, 100]` with `eci_version = "v1"`.
+- Positive points awarded **STRICTLY for `VERIFIED` items**. `FAILED` and `SKIPPED` items contribute zero positive points.
 - Separated orthogonal dimensions:
   - **Entity Match (0–25 pts):** Direct (25), Related (12), Uncertain (5), Unrelated (0)
   - **Temporal Alignment (0–25 pts):** Exact (25), Window (18), Historical (5), Uncertain (5), Unrelated (0)
@@ -62,11 +68,11 @@ Build and verify the first end-to-end RazorPulse Investigation Pipeline:
 
 ### 6. Evidence Dossier Generator
 - `DossierGenerator`: Compiles comprehensive decision-support dossier for human risk analysts.
-- Features traceable citations (`[E1]`, `[E2]`), neutral terminology (no "red flags" jargon), transparent ECI reconciliation, evidence gaps, and actionable review checklist.
+- Features traceable citations (`[E1]`, `[E2]`) exclusively for `VERIFIED` items, neutral terminology (no "red flags" jargon), transparent ECI reconciliation, evidence gaps reflecting provider limits, and actionable review checklist.
 
 ### 7. Investigation Repository & Orchestrator
 - `investigation_repository`: Supabase CRUD, status transitions, and structured result persistence.
-- `InvestigationOrchestrator`: Coordinates the full synchronous lifecycle (`PENDING` -> `SEARCHING` -> `VERIFYING` -> `SCORING` -> `COMPLETED`), handles zero-evidence and partial failure gracefully, captures `error_stage` and `error_message` on unrecoverable failures.
+- `InvestigationOrchestrator`: Coordinates the full synchronous lifecycle (`PENDING` -> `SEARCHING` -> `VERIFYING` -> `SCORING` -> `COMPLETED`), handles zero-evidence, partial failure, and quota limits gracefully without false corroboration.
 
 ### 8. API Endpoints
 - `POST /api/v1/investigations`: Ingests `{ "risk_event_id": UUID }`, executes pipeline synchronously, returns `InvestigationDetailResponse` with full dossier (HTTP 201).
@@ -74,20 +80,22 @@ Build and verify the first end-to-end RazorPulse Investigation Pipeline:
 - `GET /api/v1/investigations`: Lists investigations with pagination and optional `status` / `risk_event_id` filters (HTTP 200).
 
 ### 9. Test Suite & Invariant Validation
-- Authored 87 automated tests (unit and integration) — **100% passing**:
-  - `test_config.py` (12 tests)
+- Authored 98 automated tests (unit and integration) — **100% passing**:
+  - `test_config.py` (13 tests)
   - `test_schemas.py` (14 tests)
   - `test_health.py` (4 tests)
   - `test_risk_events.py` (7 tests)
   - `test_query_generation.py` (5 tests)
   - `test_evidence_normalization.py` (6 tests)
-  - `test_gemini_verifier.py` (3 tests)
-  - `test_gemini_retry.py` (14 tests)
-  - `test_eci_engine.py` (10 tests validating all 10 Score Invariants)
-  - `test_dossier_generator.py` (3 tests across all 3 synthetic scenarios)
+  - `test_gemini_verifier.py` (5 tests)
+  - `test_gemini_retry.py` (18 tests)
+  - `test_eci_engine.py` (12 tests validating all 10 Score Invariants + partial/unverified cases)
+  - `test_dossier_generator.py` (4 tests across synthetic scenarios & partial verification)
   - `test_investigations_api.py` (6 tests)
-  - `test_pipeline_e2e.py` (3 end-to-end scenario tests)
-- Authored live smoke test script: `backend/scripts/smoke_test_pipeline.py`.
+  - `test_pipeline_e2e.py` (4 end-to-end scenario tests including graceful failure)
+- Authored live smoke test scripts:
+  - `backend/scripts/smoke_test_gemini.py` (live Gemini test with `gemini-3.5-flash-lite`)
+  - `backend/scripts/smoke_test_pipeline.py` (live Exa + single-batch Gemini pipeline test)
 
 ## Core Product Distinction Re-affirmed
 RazorPulse is **NOT a fraud decision engine**.

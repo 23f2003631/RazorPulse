@@ -29,6 +29,7 @@ from app.schemas.risk_event import (
     RiskEventStatus,
 )
 from app.schemas.verification import (
+    BatchEvidenceVerificationResponse,
     EvidenceStrength,
     EvidenceVerificationItem,
     ExplanationSupportLevel,
@@ -36,6 +37,7 @@ from app.schemas.verification import (
     SourceCredibilityLevel,
     TemporalMatchLevel,
     VerificationResult,
+    VerificationStatus,
 )
 
 __all__ = [
@@ -58,12 +60,14 @@ __all__ = [
     "NormalizedEvidence",
     "canonicalize_url",
     # Verification
+    "VerificationStatus",
     "MerchantMatchLevel",
     "TemporalMatchLevel",
     "ExplanationSupportLevel",
     "EvidenceStrength",
     "SourceCredibilityLevel",
     "EvidenceVerificationItem",
+    "BatchEvidenceVerificationResponse",
     "VerificationResult",
     # ECI
     "ECIBand",

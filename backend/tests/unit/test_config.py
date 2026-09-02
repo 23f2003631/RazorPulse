@@ -95,6 +95,11 @@ class TestSettings:
         assert settings.has_razorpay_credentials() is False
 
     def test_gemini_model_default(self):
-        """Default Gemini model should be gemini-2.5-flash."""
+        """Default Gemini model should be gemini-3.5-flash-lite."""
         settings = Settings(_env_file=None)
-        assert settings.GEMINI_MODEL == "gemini-2.5-flash"
+        assert settings.GEMINI_MODEL == "gemini-3.5-flash-lite"
+
+    def test_gemini_max_evidence_items_default(self):
+        """Default GEMINI_MAX_EVIDENCE_ITEMS should be 4."""
+        settings = Settings(_env_file=None)
+        assert settings.GEMINI_MAX_EVIDENCE_ITEMS == 4
