@@ -60,8 +60,12 @@ The Investigation Pipeline is the core intelligence workflow of RazorPulse. It i
 - Merges duplicate URL records, preserving highlights and richest text content.
 
 ### 3. Gemini Structured Verification
-- System prompt enforces strict evidence grounding in provided snippets (anti-hallucination).
-- Returns `EvidenceVerificationItem` structured objects evaluating:
+- **Model**: `gemini-3.6-flash` via `google-genai` SDK (`2.21.0`).
+- **Configuration**: Uses typed `types.GenerateContentConfig` with explicit `response_mime_type="application/json"`, Pydantic `response_schema=EvidenceVerificationItem`, and low `temperature=0.1`.
+- **System Instruction**: Enforces strict evidence grounding in provided snippets (anti-hallucination) and non-fraud terminology.
+- **Resilience & Transient Retry**: Includes centralized bounded exponential backoff (`with_gemini_retry`, max 3 attempts with 2s, 4s delays) for transient provider errors (`503 UNAVAILABLE`, `429 RESOURCE_EXHAUSTED`).
+- **Provider Outage Boundary**: Provider-side 503 errors can still occur if capacity spikes persist after all retries; this is treated as an explicit investigation failure (`FAILED` status with `error_stage="verifying"`) rather than fabricating partial results or silent fallbacks.
+- **Verification Schema**: Returns `EvidenceVerificationItem` structured objects evaluating:
   - `merchant_match` (`direct_match`, `related_entity`, `unrelated`, `uncertain`)
   - `temporal_match` (`exact_match`, `window_match`, `historical_previous`, `post_anomaly`, `unrelated_timing`, `uncertain`)
   - `explanation_support` (`strong_explanation`, `moderate_explanation`, `weak_explanation`, `no_explanation`, `uncertain`)

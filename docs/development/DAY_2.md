@@ -40,10 +40,12 @@ Build and verify the first end-to-end RazorPulse Investigation Pipeline:
   - `IDENTITY_CONTEXT`: General brand background and corporate profile.
 - `ExaSearchStrategy`: Executes multi-intent searches with per-query error resilience, normalizes raw results, and deduplicates canonical URLs.
 
-### 4. Gemini Evidence Verifier
-- Anti-hallucination system prompt (`VERIFICATION_SYSTEM_INSTRUCTION`) forcing strict evidence grounding in provided text snippets, explicit distinction between factual proof and plausibility, explicit contradiction detection, and neutral non-fraud terminology.
-- `GeminiVerifier`: Evaluates evidence items using `gemini-2.5-flash` with structured Pydantic response schema (`response_schema=EvidenceVerificationItem`).
-- Fallback handling: Gracefully handles model evaluation exceptions per item without aborting the broader investigation.
+### 4. Gemini Evidence Verifier & Resilience
+- **Model**: `gemini-3.6-flash` using official unified `google-genai` SDK (v2.21.0).
+- **Typed Configuration**: Uses typed `types.GenerateContentConfig` for structured output with Pydantic schemas (`response_schema=EvidenceVerificationItem`).
+- **Anti-Hallucination Prompt**: `VERIFICATION_SYSTEM_INSTRUCTION` forces strict evidence grounding in provided text snippets, explicit distinction between factual proof and plausibility, explicit contradiction detection, and neutral non-fraud terminology.
+- **Transient Retry Wrapper**: `with_gemini_retry` provides bounded exponential backoff (max 3 attempts with 2s, 4s delays) for transient provider errors (`503 UNAVAILABLE`, `429 RESOURCE_EXHAUSTED`). Non-transient errors (400, 401, 403, 404, validation errors) fail immediately.
+- **Fallback & Error Stage**: Handles item evaluation exceptions gracefully; persistent 503 provider outages after retry exhaustion fail cleanly with `FAILED` status and `error_stage="verifying"`.
 
 ### 5. Deterministic ECI v1 Heuristic Engine
 - Implemented pure Python rule engine (`app/services/scoring/eci_engine.py`) calculating ECI bounded to `[0, 100]` with `eci_version = "v1"`.
@@ -72,7 +74,7 @@ Build and verify the first end-to-end RazorPulse Investigation Pipeline:
 - `GET /api/v1/investigations`: Lists investigations with pagination and optional `status` / `risk_event_id` filters (HTTP 200).
 
 ### 9. Test Suite & Invariant Validation
-- Authored 73 automated tests (unit and integration) — **100% passing**:
+- Authored 87 automated tests (unit and integration) — **100% passing**:
   - `test_config.py` (12 tests)
   - `test_schemas.py` (14 tests)
   - `test_health.py` (4 tests)
@@ -80,6 +82,7 @@ Build and verify the first end-to-end RazorPulse Investigation Pipeline:
   - `test_query_generation.py` (5 tests)
   - `test_evidence_normalization.py` (6 tests)
   - `test_gemini_verifier.py` (3 tests)
+  - `test_gemini_retry.py` (14 tests)
   - `test_eci_engine.py` (10 tests validating all 10 Score Invariants)
   - `test_dossier_generator.py` (3 tests across all 3 synthetic scenarios)
   - `test_investigations_api.py` (6 tests)

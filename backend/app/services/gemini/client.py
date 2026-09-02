@@ -27,11 +27,13 @@ ARCHITECTURAL BOUNDARY:
 
 from typing import Optional
 
+from google.genai import types
 from pydantic import BaseModel, Field
 
 from app.config.settings import get_settings
 from app.core.exceptions import ConfigurationError, GeminiServiceError
 from app.core.logging import get_logger
+from app.services.gemini.retry import with_gemini_retry
 
 logger = get_logger("gemini_client")
 
@@ -86,9 +88,13 @@ class GeminiClient:
             Dict with connectivity status and model info.
         """
         try:
-            response = self._client.models.generate_content(
-                model=self._model_name,
-                contents="Respond with exactly: RAZORPULSE_OK",
+            response = with_gemini_retry(
+                lambda: self._client.models.generate_content(
+                    model=self._model_name,
+                    contents="Respond with exactly: RAZORPULSE_OK",
+                    config=types.GenerateContentConfig(),
+                ),
+                operation_name="health_check",
             )
 
             response_text = response.text.strip() if response.text else ""
@@ -124,13 +130,17 @@ class GeminiClient:
             confidence: float = Field(description="A confidence score between 0 and 1")
 
         try:
-            response = self._client.models.generate_content(
-                model=self._model_name,
-                contents="Return a test message with 'RazorPulse structured output works' and confidence 0.95",
-                config={
-                    "response_mime_type": "application/json",
-                    "response_schema": TestStructuredOutput,
-                },
+            config = types.GenerateContentConfig(
+                response_mime_type="application/json",
+                response_schema=TestStructuredOutput,
+            )
+            response = with_gemini_retry(
+                lambda: self._client.models.generate_content(
+                    model=self._model_name,
+                    contents="Return a test message with 'RazorPulse structured output works' and confidence 0.95",
+                    config=config,
+                ),
+                operation_name="structured_output_test",
             )
 
             import json

@@ -10,6 +10,8 @@ import json
 from typing import Optional
 from uuid import UUID
 
+from google.genai import types
+
 from app.core.exceptions import GeminiServiceError
 from app.core.logging import get_logger
 from app.schemas.evidence import NormalizedEvidence
@@ -27,6 +29,7 @@ from app.services.gemini.prompts import (
     VERIFICATION_SYSTEM_INSTRUCTION,
     build_evidence_verification_prompt,
 )
+from app.services.gemini.retry import with_gemini_retry
 
 logger = get_logger("gemini_verifier")
 
@@ -89,15 +92,19 @@ class GeminiVerifier:
 
         try:
             logger.info("Calling Gemini for evidence ID: {}", evidence.evidence_id)
-            response = client._client.models.generate_content(
-                model=client._model_name,
-                contents=prompt,
-                config={
-                    "system_instruction": VERIFICATION_SYSTEM_INSTRUCTION,
-                    "response_mime_type": "application/json",
-                    "response_schema": EvidenceVerificationItem,
-                    "temperature": 0.1,  # Low temperature for deterministic analysis
-                },
+            config = types.GenerateContentConfig(
+                system_instruction=VERIFICATION_SYSTEM_INSTRUCTION,
+                response_mime_type="application/json",
+                response_schema=EvidenceVerificationItem,
+                temperature=0.1,  # Low temperature for deterministic analysis
+            )
+            response = with_gemini_retry(
+                lambda: client._client.models.generate_content(
+                    model=client._model_name,
+                    contents=prompt,
+                    config=config,
+                ),
+                operation_name=f"verify_evidence_{evidence.evidence_id}",
             )
 
             raw_text = response.text.strip() if response.text else ""
