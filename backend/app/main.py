@@ -107,11 +107,13 @@ def create_app() -> FastAPI:
     # --- Routes ---
     # Import here to avoid circular imports
     from app.api.routes.health import router as health_router
-    from app.api.routes.risk_events import router as risk_events_router
     from app.api.routes.integrations import router as integrations_router
+    from app.api.routes.investigations import router as investigations_router
+    from app.api.routes.risk_events import router as risk_events_router
 
     app.include_router(health_router)
     app.include_router(risk_events_router)
+    app.include_router(investigations_router)
     app.include_router(integrations_router)
 
     return app
