@@ -19,6 +19,7 @@ from pydantic import BaseModel, Field
 
 from app.schemas.eci import ECIScoreResult
 from app.schemas.evidence import NormalizedEvidence
+from app.schemas.pipeline_metadata import PipelineMetadata
 from app.schemas.verification import EvidenceVerificationItem
 
 
@@ -61,8 +62,12 @@ class EvidenceDossier(BaseModel):
         default_factory=lambda: datetime.now(timezone.utc),
         description="Timestamp when dossier was generated",
     )
-    pipeline_version: str = Field(default="0.2.0", description="Pipeline build version")
+    pipeline_version: str = Field(default="0.3.0", description="Pipeline build version")
     eci_version: str = Field(default="v1", description="ECI heuristic engine version")
+    pipeline_metadata: Optional[PipelineMetadata] = Field(
+        default=None,
+        description="Detailed reproducibility and performance metadata",
+    )
 
     # --- Section 1: Anomaly Context ---
     anomaly_context: AnomalySummary = Field(..., description="Anomaly details")

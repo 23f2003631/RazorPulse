@@ -14,6 +14,7 @@ from pydantic import BaseModel, Field
 from app.schemas.dossier import EvidenceDossier
 from app.schemas.eci import ECIBand, ECIScoreResult
 from app.schemas.evidence import NormalizedEvidence
+from app.schemas.pipeline_metadata import PipelineMetadata
 from app.schemas.verification import EvidenceVerificationItem
 
 
@@ -90,6 +91,7 @@ class InvestigationDetailResponse(BaseModel):
     dossier: Optional[EvidenceDossier] = None
     evidence_items: list[NormalizedEvidence] = Field(default_factory=list)
     verification_items: list[EvidenceVerificationItem] = Field(default_factory=list)
+    pipeline_metadata: Optional[PipelineMetadata] = None
 
     model_config = {"from_attributes": True}
 

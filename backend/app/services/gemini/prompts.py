@@ -5,6 +5,8 @@ Anti-hallucination prompt templates enforcing strict evidence grounding,
 neutral tone, factual quotation, and explicit uncertainty detection.
 """
 
+VERIFICATION_PROMPT_VERSION = "v1"
+
 VERIFICATION_SYSTEM_INSTRUCTION = """You are an objective Evidence Verification Analyst for RazorPulse.
 Your sole job is to evaluate whether a supplied piece of external web evidence corroborates a real-world event that could explain an observed payment transaction anomaly.
 

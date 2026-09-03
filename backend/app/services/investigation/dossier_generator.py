@@ -17,7 +17,14 @@ from app.schemas.dossier import (
 )
 from app.schemas.eci import ECIScoreResult
 from app.schemas.evidence import NormalizedEvidence
-from app.schemas.verification import VerificationResult, VerificationStatus
+from app.schemas.pipeline_metadata import PipelineMetadata
+from app.schemas.verification import (
+    MerchantMatchLevel,
+    TemporalMatchLevel,
+    VerificationResult,
+    VerificationStatus,
+)
+from app.services.evidence_quality import EvidenceQualitySummary
 
 
 class DossierGenerator:
@@ -34,6 +41,8 @@ class DossierGenerator:
         verification_result: VerificationResult,
         eci_result: ECIScoreResult,
         executed_queries: list[dict],
+        pipeline_metadata: Optional[PipelineMetadata] = None,
+        quality_summary: Optional[EvidenceQualitySummary] = None,
     ) -> EvidenceDossier:
         """
         Assemble the complete analyst-facing Evidence Dossier.
@@ -142,18 +151,28 @@ class DossierGenerator:
             if len(verified_items) == 1:
                 evidence_gaps.append("Only a single source was verified; lacks independent multi-domain corroboration.")
 
-        # 6. Analyst Review Checklist
+        # 6. Analyst Review Checklist (Evidence-ID referencing)
         checklist = cls._build_review_checklist(
             anomaly_summary=anomaly_summary,
             eci_result=eci_result,
-            contradictions=verification_result.overall_contradictions,
+            citations=citations,
+            verification_result=verification_result,
+            quality_summary=quality_summary,
         )
+
+        # Append quality exclusions/advisories to evidence_gaps if present
+        if quality_summary:
+            for excl in quality_summary.exclusion_reasons[:3]:
+                evidence_gaps.append(f"Quality gate exclusion: {excl}")
+            for flag in quality_summary.flagged_reasons[:2]:
+                evidence_gaps.append(f"Quality advisory: {flag}")
 
         return EvidenceDossier(
             investigation_id=investigation_id,
             generated_at=datetime.now(timezone.utc),
-            pipeline_version="0.2.0",
+            pipeline_version="0.3.0",
             eci_version=eci_result.eci_version,
+            pipeline_metadata=pipeline_metadata,
             anomaly_context=anomaly_summary,
             executive_summary=executive_summary,
             eci_result=eci_result,
@@ -222,7 +241,9 @@ class DossierGenerator:
         cls,
         anomaly_summary: AnomalySummary,
         eci_result: ECIScoreResult,
-        contradictions: list[str],
+        citations: list[EvidenceCitation],
+        verification_result: VerificationResult,
+        quality_summary: Optional[EvidenceQualitySummary] = None,
     ) -> list[str]:
         items: list[str] = [
             f"Review transaction settlement accounts and merchant profile for {anomaly_summary.merchant_name}.",
@@ -234,7 +255,34 @@ class DossierGenerator:
         elif eci_result.eci_score >= 60:
             items.insert(0, "Verify that the reported external event/campaign corresponds to the merchant's registered category and typical basket size.")
 
-        if contradictions:
-            items.append(f"Investigate identified evidence discrepancy: {contradictions[0]}")
+        # Map evidence_id to citation_id for clear provenance in checklist
+        citation_by_ev_id = {c.evidence_id: c for c in citations}
+
+        # Item-specific provenance checks referencing citation IDs
+        for item in verification_result.items:
+            citation = citation_by_ev_id.get(item.evidence_id)
+            ref = f"{citation.citation_id} ({citation.source_domain})" if citation else "discovered evidence"
+
+            if item.contradictions_identified:
+                items.append(f"Investigate contradiction / discrepancy flagged in {ref}: {item.contradictions_identified[0]}")
+            if item.temporal_match in (TemporalMatchLevel.UNCERTAIN, TemporalMatchLevel.HISTORICAL_PREVIOUS):
+                items.append(f"Verify publication timeframe for {ref} -- temporal match assessed as '{item.temporal_match.value}'.")
+            if item.merchant_match in (MerchantMatchLevel.RELATED_ENTITY, MerchantMatchLevel.UNCERTAIN):
+                items.append(f"Confirm legal or commercial relationship for {ref} -- entity match assessed as '{item.merchant_match.value}'.")
+
+        # Fallback if contradiction recorded in overall but not caught per-item
+        if verification_result.overall_contradictions and not any("Investigate contradiction flagged in" in it for it in items):
+            items.append(f"Investigate identified evidence discrepancy: {verification_result.overall_contradictions[0]}")
+
+        # Single source dependency notice
+        if len(citations) == 1:
+            items.append(f"Corroboration relies solely on single source {citations[0].citation_id} ({citations[0].source_domain}); verify through secondary channels.")
+
+        # Claim syndication note
+        if quality_summary and quality_summary.unique_claim_groups < len(citations) and len(citations) >= 2:
+            items.append(
+                f"Note: Multiple sources appear to syndicate a single announcement "
+                f"({quality_summary.unique_claim_groups} unique claim cluster(s) among {len(citations)} sources). Check for independent news reporting."
+            )
 
         return items
