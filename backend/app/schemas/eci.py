@@ -2,7 +2,7 @@
 Event Corroboration Index (ECI) schemas.
 
 Represents the deterministic scoring engine output and factor contributions.
-Adheres strictly to the ECI v1 heuristic methodology.
+Supports ECI v1 (additive global-best) and v1.1 (per-item eligibility) methodologies.
 
 IMPORTANT DISCLAIMER:
   The ECI measures the strength of external evidence corroborating
@@ -40,6 +40,34 @@ class ECIFactorCategory(str, Enum):
     INDEPENDENT_CORROBORATION = "independent_corroboration"
     CONTRADICTION_PENALTY = "contradiction_penalty"
     UNCERTAINTY_PENALTY = "uncertainty_penalty"
+    GATING_EXCLUSION = "gating_exclusion"
+
+
+class ECIExcludedItem(BaseModel):
+    """
+    Audit record for a verified evidence item that was excluded from
+    positive ECI contribution by a per-item eligibility gate.
+
+    The item is preserved in the dossier for analyst review — it is never
+    silently discarded.
+    """
+
+    evidence_id: UUID = Field(..., description="ID of the excluded evidence item")
+    exclusion_reason: str = Field(
+        ...,
+        description=(
+            "Machine-readable reason code: "
+            "'entity_mismatch', 'temporal_ineligible', 'contradicted_source'"
+        ),
+    )
+    explanation: str = Field(
+        ...,
+        description="Human-readable explanation of why this item was excluded",
+    )
+    raw_contribution: float = Field(
+        default=0.0,
+        description="What the item would have scored without the eligibility gate",
+    )
 
 
 class ECIFactorContribution(BaseModel):
@@ -89,6 +117,14 @@ class ECIScoreResult(BaseModel):
     factors: list[ECIFactorContribution] = Field(
         default_factory=list,
         description="Complete itemized list of factor contributions",
+    )
+    excluded_items: list[ECIExcludedItem] = Field(
+        default_factory=list,
+        description="Evidence items excluded from positive contribution by per-item eligibility gates (v1.1+)",
+    )
+    eligible_evidence_count: int = Field(
+        default=0,
+        description="Number of verified evidence items that passed all eligibility gates (v1.1+)",
     )
     is_zero_evidence: bool = Field(
         default=False,
