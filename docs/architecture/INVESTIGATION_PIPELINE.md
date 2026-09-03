@@ -53,16 +53,21 @@ The Investigation Pipeline is the core intelligence workflow of RazorPulse. It i
   3. `COMMERCIAL_CAMPAIGN`: `"[merchant]" sale OR campaign OR launch OR viral`
   4. `ANOMALY_CONTEXT`: `"[merchant]" surge OR demand OR sold out`
 
-### 2. Evidence Normalization, Deduplication & Deterministic Ranking
+### 2. Evidence Normalization, Quality Gates & Deduplication
 - Canonicalizes discovered URLs (stripping tracking parameters like `utm_*` and `fbclid`).
 - Classifies structural `source_type` (merchant official, news media, press release, social, industry, general web).
 - Assigns stable UUID `evidence_id` for provenance tracking.
 - Merges duplicate URL records, preserving highlights and richest text content.
+- **Evidence Quality Gates (Day 3)**:
+  - Non-destructive auditing: evaluates valid URL structure, source domain resolution, content availability.
+  - Claim-level clustering: hashes text snippets to assign an `evidence_group_id` across distinct domains republishing the same syndicated press release.
+  - Advisory relevance signal: detects presence of merchant name tokens; treated strictly as an advisory signal rather than an automatic exclusion filter.
 - **Deterministic Selection**: Ranks discovered items by source type quality, highlight density, external relevance score, publication timestamp, and snippet length. Partitions items into the top $N$ (default: `GEMINI_MAX_EVIDENCE_ITEMS=4`) for LLM verification, and marks remaining items as `SKIPPED`.
 
 ### 3. Single-Batch Gemini Structured Verification
 - **Model**: `gemini-3.5-flash-lite` via `google-genai` SDK (`2.21.0`).
-- **Batch Evaluation**: Evaluates all top selected evidence items in a single Gemini request using `BatchEvidenceVerificationResponse` schema, reducing API call volume from $O(N)$ (e.g. 9 individual calls) to 1 single call per investigation.
+- **Prompt Version**: Tracked via `VERIFICATION_PROMPT_VERSION = "v1"`.
+- **Batch Evaluation**: Evaluates all top selected evidence items in a single Gemini request using `BatchEvidenceVerificationResponse` schema, reducing API call volume from $O(N)$ to 1 single call per investigation.
 - **Configuration**: Uses typed `types.GenerateContentConfig` with explicit `response_mime_type="application/json"`, Pydantic `response_schema=BatchEvidenceVerificationResponse`, and low `temperature=0.1`.
 - **System Instruction**: Enforces strict evidence grounding in provided snippets (anti-hallucination) and non-fraud terminology.
 - **Explicit Verification Statuses**:
@@ -86,5 +91,5 @@ The Investigation Pipeline is the core intelligence workflow of RazorPulse. It i
 - See [ECI_SCORING.md](ECI_SCORING.md) for full formula breakdown.
 - Positive points are awarded **ONLY** for `VERIFIED` items. `FAILED` and `SKIPPED` items award zero positive points.
 - If 0 items are verified, ECI is 0 / Low External Corroboration.
-- Synthesizes `EvidenceDossier` with traceable citations (`[E1]`, `[E2]`) for verified items, executive summary distinguishing verified vs unverified items, evidence gaps reflecting provider limits, and analyst review checklist.
-- Persists all outputs to Supabase.
+- Synthesizes `EvidenceDossier` with traceable citations (`[E1]`, `[E2]`) for verified items, executive summary distinguishing verified vs unverified items, evidence gaps reflecting provider limits and quality exclusions, and analyst review checklist referencing citation IDs.
+- **Pipeline Reproducibility Metadata (Day 3)**: Captures `pipeline_version`, `eci_version`, `search_strategy_version`, `verification_prompt_version`, `gemini_model`, stage durations (`searching`, `verifying`, `scoring`, `dossier`, `persistence`), and evidence counts. Persisted directly inside Supabase `investigations.dossier` JSONB column.

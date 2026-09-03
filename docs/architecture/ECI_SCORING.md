@@ -66,3 +66,18 @@ Every ECI factor contribution returns:
 - `points_awarded`: Points added or subtracted
 - `explanation`: Traceable justification
 - `evidence_ids`: UUIDs of the contributing evidence items
+
+---
+
+## Day 3 Calibration Findings & Known Limitations
+
+During Day 3 benchmark evaluation against 25 synthetic cases (18 dev / 7 held-out):
+
+1. **Strict Monotonic Ordering**:
+   - Mean ECI scores strictly increase across ground-truth classes: `no_corroboration` (23.6) < `weak_corroboration` (51.4) < `moderate_corroboration` (85.7) < `strong_corroboration` (96.0).
+2. **Contradiction Detection**:
+   - Evaluated as an independent binary dimension with 100% precision and recall on the benchmark.
+3. **Known Failure Modes Identified for Day 4**:
+   - *Entity Mismatch Leakage:* Articles about unrelated companies (`merchant_match = UNRELATED`) published on the exact date by high-credibility outlets accrue 27 points from temporal match and source credibility. Day 4 will gate temporal alignment on entity relevance.
+   - *Temporal Directionality:* Post-anomaly events accrue entity points. Day 4 will add a causal gating rule.
+   - *Social Inflation:* Unverified social rumors can score in the 60s if entity and date align. Day 4 will apply source credibility ceilings.

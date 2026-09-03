@@ -2,15 +2,15 @@
 
 AI-powered external-context verification for anomalous payment-risk events.
 
-**Status:** Day 2 complete — Full investigation pipeline, Exa discovery, Gemini verification, deterministic ECI v1 engine, Evidence Dossier, Supabase persistence, 73 tests passing.
+**Status:** Day 3 complete — Evaluation benchmark suite (25 cases), canonical offline runner, ECI calibration analysis, evidence quality gates, pipeline reproducibility metadata, 128 tests passing (100%).
 
 ## Overview
 
-RazorPulse is a risk investigation copilot system designed for the Razorpay AI Risk Manager track. It is intended to assist risk analysts in investigating anomalous payment events by automatically discovering external context, verifying evidence, and providing deterministic corroboration scores.
+RazorPulse is a risk investigation copilot system designed for the Razorpay AI Risk Manager track. It assists human risk analysts in investigating anomalous payment events by automatically discovering external context, verifying evidence, and providing deterministic corroboration scores.
 
 ### Problem
 
-High-risk payment anomalies require rapid, evidence-based investigation. Manual investigation is time-consuming and prone to cognitive bias. RazorPulse aims to augment human risk analysts with AI-driven discovery and deterministic, explainable scoring.
+High-risk payment anomalies require rapid, evidence-based investigation. Manual investigation is time-consuming and prone to cognitive bias. RazorPulse augments human risk analysts with AI-driven discovery and deterministic, explainable scoring.
 
 ## Architecture at a Glance
 
@@ -21,13 +21,15 @@ Risk anomaly ingestion
         ↓
 External event discovery (Exa AI)
         ↓
+Evidence Quality Gates & Claim Grouping
+        ↓
 Evidence verification and interpretation (Gemini)
         ↓
 Deterministic corroboration-scoring engine (ECI v1)
         ↓
-Human-readable risk evidence dossier
+Human-readable risk evidence dossier with [E1] citations
         ↓
-Supabase persistence
+Supabase persistence (with PipelineMetadata)
         ↓
 Risk Analyst Dashboard
 ```
@@ -36,7 +38,7 @@ Risk Analyst Dashboard
 
 - **Defense-Only**: Read-only intelligence gathering. No autonomous financial action.
 - **Human-in-the-Loop**: Analysts make final decisions; system provides evidence.
-- **Explainable**: All scoring decisions must be transparent and audit-able.
+- **Explainable**: All scoring decisions must be transparent and auditable.
 - **Evidence-Driven**: All conclusions backed by traceable, provenance-tracked evidence.
 - **Deterministic Final Scoring**: No probabilistic black boxes in the final corroboration score.
 - **Fail-Closed**: Insufficient evidence → conservative (safe) scores.
@@ -49,11 +51,10 @@ Risk Analyst Dashboard
 - **Validation**: Pydantic v2
 - **Environment**: Python virtual environment
 
-### Frontend
-- **Framework**: Next.js
-- **Language**: TypeScript
-- **UI Library**: React
-- **Styling**: Tailwind CSS
+### Frontend (Day 4)
+- **Framework**: React / Vite
+- **Language**: TypeScript / JavaScript
+- **Styling**: Vanilla CSS tokens
 
 ### Database
 - **Primary**: Supabase (PostgreSQL)
@@ -61,12 +62,13 @@ Risk Analyst Dashboard
 
 ### AI / External Services
 - **External Intelligence**: Exa AI (web/event discovery)
-- **Evidence Interpretation**: Google Gemini (`gemini-2.5-flash`, structured verification)
+- **Evidence Interpretation**: Google Gemini (`gemini-3.5-flash-lite`, structured verification)
 - **Scoring**: Deterministic Python rules engine (ECI v1)
 
-### DevOps
-- **Version Control**: Git / GitHub
-- **Testing**: pytest (73 automated tests)
+### Testing & Evaluation
+- **Testing**: pytest (128 automated tests, 100% passing)
+- **Evaluation Suite**: 25 labeled synthetic benchmark cases (18 dev / 7 held-out) spanning 12 archetypes
+- **Benchmark Runner**: Offline fixture-only execution measuring 4-class corroboration and binary contradiction F1
 
 ## Repository Structure
 
@@ -101,16 +103,16 @@ razorpulse/
 │   │   ├── unit/                # Unit tests (config, schemas, query gen, normalizer, ECI invariants, verifier, dossier)
 │   │   ├── integration/         # Integration tests (health, risk_events, investigations API, pipeline E2E)
 │   │   └── fixtures/            # Test fixtures (risk events, synthetic scenarios)
-│   └── scripts/                 # Live smoke tests (smoke_test_exa, smoke_test_gemini, smoke_test_pipeline)
+│   ├── evaluation/              # Evaluation Framework (ground truth, dataset, metrics, runner, calibration)
+│   └── scripts/                 # Scripts (run_demo, smoke_test_exa, smoke_test_gemini, smoke_test_pipeline)
 │
 ├── database/                     # Database schema and migrations
-│   ├── schemas/                 # SQL schemas (001_initial_schema.sql, 002_investigations_schema.sql)
+│   └── schemas/                 # SQL schemas (001_initial_schema.sql, 002_investigations_schema.sql)
 │
-├── evaluation/                   # Benchmark and evaluation suite (Day 3)
-│   ├── datasets/                # Benchmark datasets
-│   └── experiments/             # Experiment definitions
-│
-└── data/                         # Data directory (synthetic test data)
+└── docs/                         # Documentation
+    ├── architecture/             # Architecture docs
+    ├── development/              # Day 1, Day 2, Day 3 progress logs
+    └── evaluation/               # EVALUATION_METHODOLOGY, DATASET, RESULTS
 ```
 
 ## Development Phases
@@ -136,16 +138,14 @@ Deterministic ECI v1 heuristic scoring engine with transparent factor breakdown 
 ### Phase 6: Supabase Persistence ✓
 PostgreSQL schema migrations (001, 002) and repository CRUD for investigations and dossiers.
 
-### Phase 7: Risk Analyst Dashboard
-Frontend UI for investigation and decision-making (Next.js).
+### Phase 7: Evaluation Benchmark Suite & Robustness ✓
+25-case synthetic benchmark across 12 archetypes, canonical offline runner, ECI calibration analysis, evidence quality gates, and reproducibility metadata.
 
-### Phase 8: Evaluation Benchmark
-Precision, recall, citation correctness metrics on held-out test sets.
+### Phase 8: Risk Analyst Dashboard (Day 4)
+Frontend UI for investigation and decision-making (React / Vite).
 
-### Phase 9: Adversarial Testing
-Robustness and edge-case testing.
-
-### Phase 10: Demo & Production Polish
+### Phase 9: Adversarial Tuning & Polish (Day 4)
+Model calibration based on Day 3 failure modes and production polish.
 Final refinement and deployment-readiness.
 
 ## Data Flow (Planned)

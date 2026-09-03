@@ -1,10 +1,10 @@
 # RazorPulse — Project Status
 
-**Last updated:** 2026-09-02 (Day 2)
+**Last updated:** 2026-09-03 (Day 3)
 
 ## Current Phase
 
-**Day 2 — Investigation Pipeline + Evidence Verification + Deterministic ECI v1 Engine ✅**
+**Day 3 — Evaluation Dataset + Benchmark Suite + Pipeline Hardening ✅**
 
 ## Completed Work
 
@@ -38,20 +38,30 @@
 - **Orchestration & Persistence**: End-to-end investigation service coordinating discovery, verification, scoring, dossier synthesis, and Supabase persistence.
 - **Investigation API**: `POST /api/v1/investigations` (synchronous execution), `GET /api/v1/investigations/{id}` (full dossier), `GET /api/v1/investigations` (paginated list).
 - **Synthetic Evaluation Scenarios**: 3 realistic scenarios (Strong Viral Launch, Zero Evidence, Contradicted Event).
-- **Test Suite**: 73 automated unit and integration tests (100% passing) verifying all 10 ECI Score Invariants, API routes, normalizers, and end-to-end pipeline execution.
-- **Live Smoke Test Script**: `backend/scripts/smoke_test_pipeline.py`.
+- **Test Suite**: 98 automated tests.
+
+### Day 3: Evaluation Dataset, Benchmark Suite, & Robustness ✅
+- **Evaluation Ground Truth Model**: Independent corroboration classification (4-class) and binary contradiction detection data model.
+- **25-Case Synthetic Evaluation Dataset**: 25 labeled cases covering all 12 scenario archetypes (A–L), split into 18 development and 7 held-out cases.
+- **Canonical Offline Benchmark Runner**: Reproducible fixture-only benchmark measuring Accuracy, Macro P/R/F1, Confusion Matrix, and Contradiction F1.
+- **ECI Calibration & Separation Analysis**: Proved strictly monotonic mean ECI ($23.6 < 51.4 < 85.7 < 96.0$) and cataloged 4 systemic failure modes in additive scoring.
+- **Evidence Quality Gates**: Non-destructive annotation service for URL validation, source domain verification, content availability, and claim syndication clustering (`evidence_group_id`).
+- **Reproducibility Metadata**: Structured `PipelineMetadata` capturing pipeline version ("0.3.0"), prompt version ("v1"), stage timings, and counts persisted inside Supabase.
+- **Analyst Checklist Provenance**: Enhanced dossier checklist referencing specific citation markers (e.g. `[E1] (economictimes.indiatimes.com)`).
+- **Deterministic Demo Scenarios**: `scripts/run_demo.py` showcasing 3 realistic scenarios without artificial score tuning.
+- **Directional Invariant Tests**: Formal monotonicity tests verifying directional integrity across all scoring dimensions.
+- **128 Automated Tests**: 100% passing across the entire test suite.
 
 ## Work Remaining
 
-### Day 3 (Next)
-- Evaluation dataset & benchmark suite (measuring precision and recall on held-out test scenarios)
-- Investigation comparison and search tuning
-- Refinements for multi-merchant and high-volume anomaly workflows
-- Preparation for analyst frontend integration
+### Day 4 (Next)
+- Model calibration and search query tuning based on Day 3 failure modes (entity gating, causal directionality, credibility ceilings)
+- Risk Analyst Dashboard (React / Vite)
+- API contract finalization for frontend visualization
+- End-to-end visual walkthrough and demonstration
 
 ### Future Phases
-- Risk Analyst Dashboard (Next.js)
-- Adversarial robustness testing
+- High-volume batch ingestion workflows
 - Production deployment polish
 
 ## Decisions Made
@@ -61,8 +71,10 @@
 | FastAPI for backend | ✅ Confirmed |
 | Supabase/PostgreSQL for database | ✅ Confirmed |
 | Exa AI for external event discovery | ✅ Implemented |
-| Google Gemini for evidence verification (`gemini-2.5-flash`) | ✅ Implemented |
+| Google Gemini for evidence verification (`gemini-3.5-flash-lite`) | ✅ Implemented |
 | Deterministic Python ECI v1 heuristic scoring engine | ✅ Implemented |
+| Independent Corroboration and Contradiction evaluation dimensions | ✅ Implemented |
+| Non-destructive evidence quality annotation (no silent deletion) | ✅ Implemented |
 | Synchronous MVP investigation execution model | ✅ Implemented |
 | Neutral corroboration terminology (no "red flags" / fraud claims) | ✅ Implemented |
 | Simulated risk events (no fake Razorpay risk webhooks) | ✅ Implemented |
@@ -71,6 +83,7 @@
 - **Backend:** Python 3.14, FastAPI, Pydantic v2
 - **Database:** Supabase (PostgreSQL)
 - **External Search:** Exa AI (`exa-py`)
-- **Evidence Verification:** Google Gemini (`google-genai`, `gemini-2.5-flash`)
+- **Evidence Verification:** Google Gemini (`google-genai`, `gemini-3.5-flash-lite`)
 - **Scoring:** Deterministic Python rule engine (ECI v1)
-- **Testing:** pytest (73 tests passing)
+- **Evaluation:** Canonical offline fixture benchmark (25 cases, 18 dev / 7 held-out)
+- **Testing:** pytest (128 tests passing, 100%)
