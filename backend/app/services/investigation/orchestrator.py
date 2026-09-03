@@ -157,14 +157,20 @@ class InvestigationOrchestrator:
             stage_durations["verifying"] = round(time.perf_counter() - t_stage, 3)
             logger.info("Verification complete in {:.3f}s", stage_durations["verifying"])
 
-            # --- Step 5: Scoring Stage (Deterministic ECI v1) ---
+            # --- Step 5: Scoring Stage (Deterministic ECI v1.1) ---
             current_stage = "SCORING"
             investigation_repository.update_status(inv_id, InvestigationStatus.SCORING)
             t_stage = time.perf_counter()
 
+            evidence_group_ids = {
+                a.evidence.evidence_id: a.evidence_group_id
+                for a in annotated_evidence
+                if a.evidence_group_id
+            }
             eci_result = ECIEngine.calculate_eci(
                 verification_result=verification_result,
                 evidence_items=evidence_items,
+                evidence_group_ids=evidence_group_ids,
             )
             stage_durations["scoring"] = round(time.perf_counter() - t_stage, 3)
             logger.info("ECI calculated in {:.3f}s: score={}, band={}", stage_durations["scoring"], eci_result.eci_score, eci_result.band.value)

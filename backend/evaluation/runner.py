@@ -178,13 +178,24 @@ def run_single_case(case: EvalCase) -> CaseResult:
         vi_copy = vi.model_copy(update={"evidence_id": ev.evidence_id})
         verification_result.items[i] = vi_copy
 
-    # Handle cases where there are more verification items than evidence items
-    # (e.g., SKIPPED items) — these keep their fixture IDs
+    # Annotate evidence items with quality gates to detect claim groups (near-duplicate text)
+    from app.services.evidence_quality import EvidenceQualityService
+    annotated_items, _ = EvidenceQualityService.annotate_collection(
+        evidence_items=evidence_items,
+        merchant_name=case.merchant_name,
+        merchant_domain=case.merchant_domain,
+    )
+    evidence_group_ids = {
+        a.evidence.evidence_id: a.evidence_group_id
+        for a in annotated_items
+        if a.evidence_group_id
+    }
 
     # Calculate ECI
     eci_result = ECIEngine.calculate_eci(
         verification_result=verification_result,
         evidence_items=evidence_items,
+        evidence_group_ids=evidence_group_ids,
     )
 
     # Classify outputs
