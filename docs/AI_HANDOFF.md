@@ -12,7 +12,7 @@
 | **Track** | AI Risk Manager (Razorpay AI Buildathon 2026) |
 | **Product** | External Evidence Corroboration Engine for anomalous payment-risk events |
 | **Core Metric** | Event Corroboration Index (ECI v1.1 heuristic engine) |
-| **Status** | **Day 5 Complete** — Production-Grade Analyst Console, Demo Mode, 152 Tests (100% passing), 25-Case Benchmark Validated |
+| **Status** | **Day 5 Complete** — Production-Grade Analyst Console, Offline-Ready Deterministic Demo Mode, 154 Tests (100% passing), 25-Case Benchmark Validated |
 
 ---
 
@@ -157,11 +157,18 @@ npm run dev
 # Open http://localhost:3000
 ```
 
-### Running the Pytest Suite (152 Tests)
+### Running the Pytest Suite (154 Tests)
 ```bash
 cd backend
 pytest tests -q
-# Expected: 152 passed in ~13s
+# Expected: 154 passed in ~3s
+```
+
+### Syncing Demo Scenarios Fixture (Offline Snapshot)
+```bash
+cd backend
+python scripts/export_demo_fixtures.py
+# Validated by backend/tests/integration/test_demo_fixtures_sync.py
 ```
 
 ### Running the Evaluation Benchmark
@@ -175,7 +182,7 @@ python -m evaluation.runner
 ```bash
 cd frontend
 npm run build
-# Expected: 0 errors, built in ~2.6s, ~260 kB bundle
+# Expected: 0 errors, built in ~2.9s, ~340 kB bundle
 ```
 
 ---
