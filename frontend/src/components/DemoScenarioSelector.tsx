@@ -70,7 +70,7 @@ export const DemoScenarioSelector: React.FC<DemoScenarioSelectorProps> = ({
           <div style={{ fontWeight: 600, color: "#F59E0B", fontSize: "0.9rem" }}>
             Deterministic Demonstration Mode (Offline Evaluation)
           </div>
-          <p style={{ fontSize: "0.8rem", color: "#FDE68A", marginTop: "0.2rem", lineHeight: 1.45 }}>
+          <p style={{ fontSize: "0.8rem", color: "var(--band-moderate-text)", marginTop: "0.2rem", lineHeight: 1.45 }}>
             Deterministic demo mode provides a network-independent demonstration path for the external discovery and verification pipeline. These 3 canonical scenarios demonstrate strong external corroboration, clean zero-evidence discovery, and discrepancy handling without calling external search or LLM APIs.
           </p>
         </div>

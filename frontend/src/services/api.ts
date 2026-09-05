@@ -7,6 +7,8 @@
 
 import {
   DemoScenarioListResponse,
+  HealthResponse,
+  IntegrationStatusResponse,
   InvestigationDetailResponse,
   InvestigationListResponse,
   RiskEvent,
@@ -73,7 +75,12 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 export const api = {
   // Health
   checkHealth: async () => {
-    return request<{ status: string; app: string; version: string; environment: string }>("/health");
+    return request<HealthResponse>("/health");
+  },
+
+  // Integrations Status
+  getIntegrationsStatus: async () => {
+    return request<IntegrationStatusResponse>("/api/v1/integrations/status");
   },
 
   // Risk Events

@@ -320,3 +320,31 @@ export interface DemoScenarioResponse {
 export interface DemoScenarioListResponse {
   scenarios: DemoScenarioResponse[];
 }
+
+// ============================================================
+// System Health & Integrations
+// ============================================================
+
+export interface HealthResponse {
+  status: string;
+  app: string;
+  version: string;
+  environment: string;
+}
+
+export interface IntegrationStatusResponse {
+  supabase: {
+    configured: boolean;
+  };
+  exa: {
+    configured: boolean;
+  };
+  gemini: {
+    configured: boolean;
+    model?: string;
+  };
+  razorpay: {
+    configured: boolean;
+    note?: string;
+  };
+}

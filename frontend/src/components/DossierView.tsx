@@ -98,10 +98,11 @@ export const DossierView: React.FC<DossierViewProps> = ({
 
       {/* Section 1: Anomaly Context Header */}
       <div
-        className="panel"
+        className="card"
         style={{
           padding: "1.5rem",
-          background: "linear-gradient(180deg, rgba(15, 23, 42, 0.95) 0%, rgba(11, 15, 25, 0.95) 100%)",
+          background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
+          border: "1px solid var(--border-subtle)",
         }}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem" }}>
@@ -240,7 +241,8 @@ export const DossierView: React.FC<DossierViewProps> = ({
               color: "var(--text-muted)",
               marginTop: "0.75rem",
               padding: "0.2rem 0.5rem",
-              backgroundColor: "rgba(255, 255, 255, 0.04)",
+              backgroundColor: "var(--bg-app)",
+              border: "1px solid var(--border-subtle)",
               borderRadius: "var(--radius-sm)",
             }}
           >
@@ -266,11 +268,11 @@ export const DossierView: React.FC<DossierViewProps> = ({
               alignItems: "flex-start",
               gap: "0.625rem",
               padding: "0.75rem 1rem",
-              backgroundColor: "rgba(59, 130, 246, 0.06)",
+              backgroundColor: "var(--accent-primary-subtle)",
               border: "1px solid var(--accent-primary-border)",
               borderRadius: "var(--radius-md)",
               fontSize: "0.78rem",
-              color: "#93C5FD",
+              color: "var(--band-strong-text)",
               lineHeight: 1.45,
             }}
           >
@@ -377,12 +379,12 @@ export const DossierView: React.FC<DossierViewProps> = ({
                 <AlertTriangle size={18} />
                 <span>Contradictory Evidence Identified Across Sources</span>
               </div>
-              <p style={{ fontSize: "0.82rem", color: "#FCA5A5", marginBottom: "0.75rem" }}>
+              <p style={{ fontSize: "0.82rem", color: "var(--contradiction-text)", marginBottom: "0.75rem", fontWeight: 500 }}>
                 The external public record contains claims that conflict with or refute the proposed commercial explanation.
               </p>
               <ul style={{ paddingLeft: "1.25rem", display: "flex", flexDirection: "column", gap: "0.35rem" }}>
                 {contradictions.map((contra, idx) => (
-                  <li key={idx} style={{ color: "#FEE2E2", fontSize: "0.82rem" }}>
+                  <li key={idx} style={{ color: "#B91C1C", fontSize: "0.82rem" }}>
                     {contra}
                   </li>
                 ))}

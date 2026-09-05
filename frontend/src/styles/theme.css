@@ -1,70 +1,78 @@
-/* RazorPulse Enterprise Fintech Theme Tokens */
+/* RazorPulse Clean Light Console Theme Tokens */
 :root {
-  /* Color Palette - Deep Slate / Midnight */
-  --bg-app: #090D16;
-  --bg-surface: #0F172A;
-  --bg-surface-elevated: #151F33;
-  --bg-surface-hover: #1E293B;
-  --bg-surface-active: #25334D;
-  --bg-input: #0B1120;
+  /* Canvas & Surfaces */
+  --bg-app: #F4F6FA;
+  --bg-surface: #FFFFFF;
+  --bg-surface-elevated: #FFFFFF;
+  --bg-surface-hover: #F8FAFC;
+  --bg-surface-active: #EFF6FF;
+  --bg-sidebar: #FFFFFF;
+  --bg-input: #FFFFFF;
 
   /* Borders & Dividers */
-  --border-subtle: rgba(255, 255, 255, 0.07);
-  --border-medium: rgba(255, 255, 255, 0.12);
-  --border-strong: rgba(255, 255, 255, 0.2);
-  --border-focus: #3B82F6;
+  --border-subtle: #E5E7EB;
+  --border-medium: #D1D5DB;
+  --border-strong: #9CA3AF;
+  --border-focus: #2563EB;
 
   /* Typography */
   --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
   --font-mono: 'JetBrains Mono', 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 
   /* Text Colors */
-  --text-primary: #F8FAFC;
-  --text-secondary: #94A3B8;
+  --text-primary: #0F172A;
+  --text-secondary: #475569;
   --text-muted: #64748B;
-  --text-inverse: #0F172A;
+  --text-inverse: #FFFFFF;
 
-  /* Brand Accents */
-  --accent-primary: #3B82F6;
-  --accent-primary-hover: #2563EB;
-  --accent-primary-subtle: rgba(59, 130, 246, 0.12);
-  --accent-primary-border: rgba(59, 130, 246, 0.3);
+  /* Brand Accents (Razorpay Royal Blue) */
+  --accent-primary: #2563EB;
+  --accent-primary-hover: #1D4ED8;
+  --accent-primary-subtle: #EFF6FF;
+  --accent-primary-border: #BFDBFE;
 
   /* ECI Band Semantics */
   --band-very-strong: #10B981;
-  --band-very-strong-bg: rgba(16, 185, 129, 0.1);
-  --band-very-strong-border: rgba(16, 185, 129, 0.25);
+  --band-very-strong-bg: #ECFDF5;
+  --band-very-strong-border: #A7F3D0;
+  --band-very-strong-text: #065F46;
 
-  --band-strong: #06B6D4;
-  --band-strong-bg: rgba(6, 182, 212, 0.1);
-  --band-strong-border: rgba(6, 182, 212, 0.25);
+  --band-strong: #2563EB;
+  --band-strong-bg: #EFF6FF;
+  --band-strong-border: #BFDBFE;
+  --band-strong-text: #1E40AF;
 
   --band-moderate: #F59E0B;
-  --band-moderate-bg: rgba(245, 158, 11, 0.1);
-  --band-moderate-border: rgba(245, 158, 11, 0.25);
+  --band-moderate-bg: #FFFBEB;
+  --band-moderate-border: #FDE68A;
+  --band-moderate-text: #92400E;
 
-  --band-low: #94A3B8;
-  --band-low-bg: rgba(148, 163, 184, 0.1);
-  --band-low-border: rgba(148, 163, 184, 0.2);
+  --band-low: #64748B;
+  --band-low-bg: #F1F5F9;
+  --band-low-border: #CBD5E1;
+  --band-low-text: #334155;
 
   /* Alert & Contradiction Semantics */
   --contradiction-color: #EF4444;
-  --contradiction-bg: rgba(239, 68, 68, 0.08);
-  --contradiction-border: rgba(239, 68, 68, 0.3);
+  --contradiction-bg: #FEF2F2;
+  --contradiction-border: #FECACA;
+  --contradiction-text: #991B1B;
 
   --exclusion-color: #F97316;
-  --exclusion-bg: rgba(249, 115, 22, 0.08);
-  --exclusion-border: rgba(249, 115, 22, 0.25);
+  --exclusion-bg: #FFF7ED;
+  --exclusion-border: #FFEDD5;
 
   /* Radii & Shadows */
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 12px;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-card: 16px;
+  --radius-pill: 9999px;
 
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.4);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -2px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -4px rgba(0, 0, 0, 0.6);
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.03);
+  --shadow-hover: 0 8px 25px rgba(0, 0, 0, 0.06);
+  --shadow-dropdown: 0 10px 30px rgba(0, 0, 0, 0.08);
 
   /* Transition timing */
   --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);

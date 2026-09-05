@@ -115,7 +115,7 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onRetry }) =>
     >
       <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
         <AlertTriangle size={18} color="var(--contradiction-color)" />
-        <span style={{ color: "#FCA5A5", fontSize: "0.85rem" }}>{message}</span>
+        <span style={{ color: "var(--contradiction-text)", fontSize: "0.85rem", fontWeight: 500 }}>{message}</span>
       </div>
       {onRetry && (
         <button onClick={onRetry} className="btn btn-secondary btn-sm">
