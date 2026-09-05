@@ -1,212 +1,205 @@
 # RazorPulse
 
-AI-powered external-context verification for anomalous payment-risk events.
+**External Evidence Corroboration Engine for Anomalous Payment-Risk Events**
 
-**Status:** Day 3 complete — Evaluation benchmark suite (25 cases), canonical offline runner, ECI calibration analysis, evidence quality gates, pipeline reproducibility metadata, 128 tests passing (100%).
-
-## Overview
-
-RazorPulse is a risk investigation copilot system designed for the Razorpay AI Risk Manager track. It assists human risk analysts in investigating anomalous payment events by automatically discovering external context, verifying evidence, and providing deterministic corroboration scores.
-
-### Problem
-
-High-risk payment anomalies require rapid, evidence-based investigation. Manual investigation is time-consuming and prone to cognitive bias. RazorPulse augments human risk analysts with AI-driven discovery and deterministic, explainable scoring.
-
-## Architecture at a Glance
-
-```
-Razorpay Test Mode / simulated risk event
-        ↓
-Risk anomaly ingestion
-        ↓
-External event discovery (Exa AI)
-        ↓
-Evidence Quality Gates & Claim Grouping
-        ↓
-Evidence verification and interpretation (Gemini)
-        ↓
-Deterministic corroboration-scoring engine (ECI v1)
-        ↓
-Human-readable risk evidence dossier with [E1] citations
-        ↓
-Supabase persistence (with PipelineMetadata)
-        ↓
-Risk Analyst Dashboard
-```
-
-### Design Principles
-
-- **Defense-Only**: Read-only intelligence gathering. No autonomous financial action.
-- **Human-in-the-Loop**: Analysts make final decisions; system provides evidence.
-- **Explainable**: All scoring decisions must be transparent and auditable.
-- **Evidence-Driven**: All conclusions backed by traceable, provenance-tracked evidence.
-- **Deterministic Final Scoring**: No probabilistic black boxes in the final corroboration score.
-- **Fail-Closed**: Insufficient evidence → conservative (safe) scores.
-
-## Technology Stack
-
-### Backend
-- **Framework**: FastAPI
-- **Language**: Python 3.14
-- **Validation**: Pydantic v2
-- **Environment**: Python virtual environment
-
-### Frontend (Day 4)
-- **Framework**: React / Vite
-- **Language**: TypeScript / JavaScript
-- **Styling**: Vanilla CSS tokens
-
-### Database
-- **Primary**: Supabase (PostgreSQL)
-- **Data Access**: supabase-py (direct client)
-
-### AI / External Services
-- **External Intelligence**: Exa AI (web/event discovery)
-- **Evidence Interpretation**: Google Gemini (`gemini-3.5-flash-lite`, structured verification)
-- **Scoring**: Deterministic Python rules engine (ECI v1)
-
-### Testing & Evaluation
-- **Testing**: pytest (128 automated tests, 100% passing)
-- **Evaluation Suite**: 25 labeled synthetic benchmark cases (18 dev / 7 held-out) spanning 12 archetypes
-- **Benchmark Runner**: Offline fixture-only execution measuring 4-class corroboration and binary contradiction F1
-
-## Repository Structure
-
-```
-razorpulse/
-├── README.md                     # This file
-├── .gitignore                    # Git ignore rules
-├── .env.example                  # Environment variables template
-├── LICENSE                       # MIT or applicable license
-│
-├── docs/                         # Documentation
-│   ├── architecture/             # System architecture docs (ARCHITECTURE, DATA_MODEL, INVESTIGATION_PIPELINE, ECI_SCORING)
-│   ├── development/              # Development logs (DAY_1, DAY_2)
-│   ├── product/                  # Product requirements
-│   ├── security/                 # Security principles
-│   └── api/                      # API specifications
-│
-├── backend/                      # FastAPI backend
-│   ├── README.md
-│   ├── requirements.txt          # Python dependencies
-│   ├── .env.example
-│   ├── app/
-│   │   ├── main.py              # Application entry point
-│   │   ├── config/              # Configuration & settings
-│   │   ├── api/routes/          # API route definitions (health, risk_events, investigations, integrations)
-│   │   ├── schemas/             # Pydantic schemas (evidence, verification, eci, dossier, investigation)
-│   │   ├── services/            # Business logic (exa, gemini, scoring, investigation)
-│   │   ├── repositories/        # Data access layer (merchant, risk_event, investigation)
-│   │   ├── core/                # Core utilities (exceptions, logging)
-│   │   └── utils/               # Helper functions
-│   ├── tests/
-│   │   ├── unit/                # Unit tests (config, schemas, query gen, normalizer, ECI invariants, verifier, dossier)
-│   │   ├── integration/         # Integration tests (health, risk_events, investigations API, pipeline E2E)
-│   │   └── fixtures/            # Test fixtures (risk events, synthetic scenarios)
-│   ├── evaluation/              # Evaluation Framework (ground truth, dataset, metrics, runner, calibration)
-│   └── scripts/                 # Scripts (run_demo, smoke_test_exa, smoke_test_gemini, smoke_test_pipeline)
-│
-├── database/                     # Database schema and migrations
-│   └── schemas/                 # SQL schemas (001_initial_schema.sql, 002_investigations_schema.sql)
-│
-└── docs/                         # Documentation
-    ├── architecture/             # Architecture docs
-    ├── development/              # Day 1, Day 2, Day 3 progress logs
-    └── evaluation/               # EVALUATION_METHODOLOGY, DATASET, RESULTS
-```
-
-## Development Phases
-
-### Phase 0: Repository Initialization ✓
-Repository structure and development environment setup.
-
-### Phase 1: Razorpay Event Ingestion ✓
-Simulated risk event ingestion and normalization.
-
-### Phase 2: Risk Anomaly Simulation ✓
-Synthetic test fixtures for simulated anomalies.
-
-### Phase 3: Exa External-Event Discovery ✓
-Bounded multi-intent query generation, semantic search, evidence normalization, and URL deduplication.
-
-### Phase 4: Gemini Evidence Verification ✓
-Anti-hallucination prompt and structured Pydantic assessment for entity match, timing, explanation support, credibility, and contradictions.
-
-### Phase 5: Deterministic Corroboration Engine ✓
-Deterministic ECI v1 heuristic scoring engine with transparent factor breakdown and 10 score invariants verified.
-
-### Phase 6: Supabase Persistence ✓
-PostgreSQL schema migrations (001, 002) and repository CRUD for investigations and dossiers.
-
-### Phase 7: Evaluation Benchmark Suite & Robustness ✓
-25-case synthetic benchmark across 12 archetypes, canonical offline runner, ECI calibration analysis, evidence quality gates, and reproducibility metadata.
-
-### Phase 8: Risk Analyst Dashboard (Day 4)
-Frontend UI for investigation and decision-making (React / Vite).
-
-### Phase 9: Adversarial Tuning & Polish (Day 4)
-Model calibration based on Day 3 failure modes and production polish.
-Final refinement and deployment-readiness.
-
-## Data Flow (Planned)
-
-1. **Ingestion**: Razorpay webhook → risk event normalization
-2. **Discovery**: Risk context → Exa AI → external events & sources
-3. **Verification**: Events + sources → Gemini → evidence interpretation
-4. **Scoring**: Evidence + rules → deterministic corroboration score
-5. **Persistence**: Events, evidence, scores → Supabase
-6. **Presentation**: Dashboard → analyst review & action
-
-## Security Principles
-
-- **Secrets Management**: All secrets in `.env.local`, never committed
-- **API Keys**: Server-side only; never exposed to frontend
-- **Least Privilege**: Services have minimal required permissions
-- **Read-Only Intelligence**: No autonomous writes to payment systems
-- **Human Decision Boundary**: Final release decisions made by humans
-- **Audit Trail**: All actions and decisions logged for compliance
-- **Source Traceability**: Every evidence piece links to source
-
-See [docs/security/](docs/security/) for detailed security design.
-
-## Getting Started
-
-### Prerequisites
-- Python 3.10+
-- Node.js 18+
-- PostgreSQL (local or Supabase)
-
-### Backend Setup (Planned)
-```bash
-cd backend
-python -m venv venv
-source venv/bin/activate  # or `venv\Scripts\activate` on Windows
-pip install -r requirements.txt
-```
-
-### Frontend Setup (Planned)
-```bash
-cd frontend
-npm install
-npm run dev
-```
-
-## Architecture Documentation
-
-See [docs/architecture/](docs/architecture/) for detailed system design, component descriptions, and data flow diagrams.
-
-## Contributing
-
-This repository follows a systematic phase-based development approach. All work must maintain the separation of concerns outlined in the architecture.
-
-## License
-
-[To be determined]
-
-## Contact
-
-For questions or collaboration, please see project documentation.
+> Built for the **Razorpay AI Buildathon 2026** — *AI Risk Manager Track*  
+> **Status:** Day 5 Complete — Production-Grade Analyst Console, Deterministic Demo Scenarios, ECI v1.1 Scoring Engine, 152 Automated Tests (100% passing), 25-Case Ground Truth Benchmark Validated.
 
 ---
 
-**Note**: Day 1 development is complete. See [docs/PROJECT_STATUS.md](docs/PROJECT_STATUS.md) for current status and [docs/AI_HANDOFF.md](docs/AI_HANDOFF.md) for development context.
+## Strategic Mission & Ethical Boundaries
+
+When a merchant experiences an anomalous payment surge (e.g., $5\times$ volume spike, midnight velocity surge, sudden average ticket increase), payment risk teams face a critical dilemma: **Is this fraudulent transaction laundering / card testing, or is it a legitimate commercial event (viral social media campaign, flash sale, PR feature)?**
+
+RazorPulse operates strictly as an **External Evidence Corroboration Engine**:
+- **Core Question Answered**: *"How strongly does external evidence (news, social media, platform announcements, regulatory filings) corroborate a real-world explanation for this anomaly?"*
+- **What RazorPulse Is NOT**:
+  - It is **not** an internal fraud scoring model.
+  - It does **not** estimate fraud probabilities or rate merchant safety.
+  - It does **not** make autonomous fund holds, payment blocks, or merchant freezes.
+- **Human Authority**: The final disposition always remains with the human risk analyst. RazorPulse equips analysts with a verifiable evidence dossier, transparent factor breakdown, auditable exclusion logs, canonical citations, and an interactive review checklist.
+
+---
+
+## System Architecture
+
+```
+                      +---------------------------------------+
+                      | Razorpay Risk Anomaly / Test Webhook  |
+                      +---------------------------------------+
+                                          |
+                                          v
+                      +---------------------------------------+
+                      |   POST /api/v1/risk-events Ingestion  |
+                      +---------------------------------------+
+                                          |
+                                          v
+                      +---------------------------------------+
+                      |         4-STAGE PIPELINE RUNNER       |
+                      |                                       |
+                      | 1. Query Generation (Multi-intent)    |
+                      | 2. Evidence Search (Exa / Mock)       |
+                      | 3. Verification & Gating (Gemini/Det) |
+                      |    - Entity match gating              |
+                      |    - Temporal causality gating        |
+                      |    - Source authority ceiling         |
+                      |    - Claim-group deduplication        |
+                      | 4. Synthesis & ECI v1.1 Scoring       |
+                      +---------------------------------------+
+                                          |
+                                          v
+                      +---------------------------------------+
+                      |     Evidence Dossier & ECI Score      |
+                      |  - Band: Low / Mod / Strong / V.Strong|
+                      |  - Factor Breakdown (5 dimensions)    |
+                      |  - Contradiction Alert Box            |
+                      |  - Auditable Gating Exclusion Log     |
+                      |  - Canonical Evidence Citations [E1]  |
+                      +---------------------------------------+
+                                          |
+                         +----------------+----------------+
+                         |                                 |
+                         v                                 v
+        +---------------------------------+  +-------------------------------+
+        |   FastAPI REST Backend (:8000)   |  |   Deterministic Demo Engine   |
+        |   - /api/v1/risk-events         |  |   - In-memory offline run     |
+        |   - /api/v1/investigations      |  |   - Network-independent demo  |
+        |   - /api/v1/demo-scenarios      |  |   - Zero API dependency       |
+        +---------------------------------+  +-------------------------------+
+                         |                                 |
+                         +----------------+----------------+
+                                          |
+                                          v
+                      +---------------------------------------+
+                      |      ANALYST DASHBOARD (React 19)     |
+                      |   - Mode Switch: Demo vs Live Queue   |
+                      |   - Interactive Anomaly Simulator     |
+                      |   - Real-time 4-Stage Stepper         |
+                      |   - Comprehensive Evidence Dossier    |
+                      |   - Human Analyst Review Checklist    |
+                      +---------------------------------------+
+```
+
+---
+
+## Deterministic Demo Scenarios
+
+For hackathon jury evaluations and live presentations, RazorPulse includes a network-independent demonstration path that executes without external API dependencies:
+
+| Scenario | Merchant | Anomaly Context | ECI Score | Band | Engine Findings |
+|---|---|---|---|---|---|
+| **Scenario 1** | **UrbanCraft India** | $5.2\times$ volume spike during Diwali festive season | **100 / 100** | `VERY STRONG` | High-credibility external footprint: Viral Instagram reel (2.4M views) and NDTV Lifestyle feature. Direct entity match, contemporaneous timing, 4/4 high factor contributions. |
+| **Scenario 2** | **QuickDeal Bazaar** | $8.0\times$ midnight volume surge | **0 / 100** | `LOW` | Zero external evidence found across news, social platforms, or registry. Confirms transaction pattern anomaly without public commercial event. |
+| **Scenario 3** | **TrendWear Daily** | $4.1\times$ flash sale surge | **4 / 100** | `LOW` *(Contradicted)* | **ECI v1.1 Scoring**: Self-asserted social source caps base score at 29 (authority ceiling). Two severe consumer scam/non-delivery contradictions deduct 25 points, arriving at a net score of 4. Prominent contradiction alert displayed. |
+
+---
+
+## Technology Stack
+
+### Frontend (Analyst Console)
+- **Framework**: React 19, TypeScript, Vite
+- **Styling**: Hand-crafted Vanilla CSS Design System (`theme.css`, `index.css`) with deep slate fintech palette
+- **Port**: `localhost:3000` (Vite proxy forwards `/api` requests to backend `:8000`)
+- **Purity**: Zero business logic duplication (all scores, bands, factor weights derived by backend)
+
+### Backend & Scoring
+- **Framework**: FastAPI (Python 3.10+)
+- **Validation**: Pydantic v2 schemas
+- **Scoring Engine**: Deterministic ECI v1.1 (5-factor formula, authority ceilings, temporal/entity gating, claim-group deduplication)
+- **Database**: SQLite / PostgreSQL (Supabase-compatible)
+- **Port**: `localhost:8000`
+
+### Testing & Evaluation Benchmark
+- **Pytest**: 152 automated tests (unit, integration, invariants, gating, E2E), 100% passing.
+- **Ground Truth Benchmark**: 25 synthetic merchant cases across 12 archetypes (18 development, 7 held-out).
+- **Benchmark Performance**:
+  - Corroboration Accuracy: **60.00%** (15/25)
+  - Macro F1: **0.5015**
+  - Contradiction Precision: **1.0000** (100.0%)
+  - Contradiction Recall: **1.0000** (100.0%)
+  - Contradiction F1: **1.0000** (100.0%)
+
+---
+
+## Getting Started
+
+### 1. Prerequisites
+- Python 3.10+
+- Node.js 18+ and npm
+
+### 2. Backend Setup
+```bash
+# Clone repository and enter backend directory
+cd backend
+
+# Create virtual environment
+python -m venv venv
+# Windows:
+.\venv\Scripts\activate
+# Linux/macOS:
+source venv/bin/activate
+
+# Install dependencies
+pip install -r requirements.txt
+
+# Start backend development server
+uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
+```
+API Documentation will be available at [http://localhost:8000/docs](http://localhost:8000/docs).
+
+### 3. Frontend Setup
+```bash
+# In a new terminal, enter frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start Vite dev server
+npm run dev
+```
+Analyst Console will be live at [http://localhost:3000](http://localhost:3000).
+
+---
+
+## Running Verification & Tests
+
+### Automated Test Suite (152 Tests)
+```bash
+cd backend
+pytest tests -q
+# Expected output: 152 passed in ~13s
+```
+
+### 25-Case Evaluation Benchmark
+```bash
+cd backend
+python -m evaluation.runner
+# Expected output: 60.00% accuracy, 0.5015 macro F1, 1.0000 contradiction F1
+```
+
+### Frontend Production Build
+```bash
+cd frontend
+npm run build
+# Expected output: Built in ~2.6s, 0 errors, ~260 kB bundle
+```
+
+---
+
+## Project Documentation Index
+
+- [Project Status](docs/PROJECT_STATUS.md): Complete milestone tracking across Days 1–5.
+- [AI Handoff Guide](docs/AI_HANDOFF.md): Engineering handoff and architectural guidelines.
+- [Day 5 Productization Log](docs/development/DAY_5.md): Detailed Day 5 implementation report.
+- [Day 4 Calibration Log](docs/development/DAY_4.md): ECI v1.1 gating and authority ceiling upgrades.
+- [Day 3 Evaluation Log](docs/development/DAY_3.md): 25-case benchmark and failure mode analysis.
+- [Evaluation Results](docs/evaluation/RESULTS.md): Full analysis of benchmark metrics and case breakdowns.
+- [Architecture](docs/architecture/ARCHITECTURE.md): System architecture and data flow.
+- [ECI Scoring Specification](docs/architecture/ECI_SCORING.md): Formal ECI mathematical specification.
+
+---
+
+## License
+
+Apache 2.0 / MIT. Developed for the Razorpay AI Buildathon 2026.

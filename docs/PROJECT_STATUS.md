@@ -1,10 +1,12 @@
 # RazorPulse — Project Status
 
-**Last updated:** 2026-09-03 (Day 4)
+**Last updated:** 2026-09-05 (Day 5 — Complete)
 
 ## Current Phase
 
-**Day 4 — Evidence Quality, Corroboration Reliability & Benchmark Hardening ✅**
+**Day 5 — Final Productization, Analyst Experience & Hackathon Readiness ✅**
+
+---
 
 ## Completed Work
 
@@ -67,21 +69,25 @@
   - Zero regressions across all 25 benchmark cases (7 fixed, 8 unchanged correct, 0 regressed).
 - **148 Automated Tests**: 100% passing across isolated gating tests, mixed-evidence scenarios, and existing test suites.
 
-## Work Remaining
+### Day 5: Final Productization, Analyst Experience & End-to-End Validation ✅
+- **Analyst Frontend Console**: Production-ready React 19 + TypeScript + Vite web application (`frontend/`) running on port 3000 with deep slate fintech design tokens (`theme.css`, `index.css`).
+- **Zero Business Logic Duplication**: Guaranteed architectural purity where the frontend acts exclusively as a presentation layer; all scoring logic, bands, and factor derivations are computed by the backend.
+- **Deterministic Demo Mode**: Added `GET /api/v1/investigations/demo-scenarios` endpoint delivering offline, network-independent demonstration of 3 core scenarios:
+  - *UrbanCraft India* (ECI 100 / Very Strong)
+  - *QuickDeal Bazaar* (ECI 0 / Low)
+  - *TrendWear Daily* (ECI 4 / Low, Contradicted with 2 severe deductions)
+- **Live Anomaly Ingestion & Stepper**: Interactive simulation modal (`POST /api/v1/risk-events`) and live 4-stage pipeline progress stepper (`POST /api/v1/investigations`).
+- **Comprehensive Evidence Dossier View**: Full hero score card, 5-factor breakdown, prominent contradiction alert box, canonical source citations, auditable gating exclusion log, and human analyst review checklist.
+- **Integration Test Expansion**: Added `test_demo_api.py` with 4 tests, reaching **152 automated tests** (100% passing).
+- **Benchmark Integrity Verification**: Confirmed exact Day 4 numbers on the 25-case benchmark (**60.00% accuracy, 0.5015 macro F1, 1.0000 contradiction F1**).
+- **End-to-End Browser Validation**: Full session recorded and verified via automated browser agent with 14 checkpoints and WebP recording.
 
-### Day 5 (Next)
-- Risk Analyst Dashboard (React / Vite)
-- API contract finalization for frontend visualization
-- End-to-end visual walkthrough and demonstration
-
-### Future Phases
-- High-volume batch ingestion workflows
-- Production deployment polish
+---
 
 ## Decisions Made
 
 | Decision | Status |
-|----------|--------|
+|---|---|
 | FastAPI for backend | ✅ Confirmed |
 | Supabase/PostgreSQL for database | ✅ Confirmed |
 | Exa AI for external event discovery | ✅ Implemented |
@@ -93,12 +99,18 @@
 | Synchronous MVP investigation execution model | ✅ Implemented |
 | Neutral corroboration terminology (no "red flags" / fraud claims) | ✅ Implemented |
 | Simulated risk events (no fake Razorpay risk webhooks) | ✅ Implemented |
+| React 19 + TypeScript + Vite for analyst frontend | ✅ Implemented |
+| In-memory deterministic demo scenarios endpoint (`GET /demo-scenarios`) | ✅ Implemented |
+| Zero frontend calculation duplication (backend is single source of truth) | ✅ Implemented |
 
-## Technologies Selected
+---
+
+## Technologies Finalized
+- **Frontend:** React 19, TypeScript, Vite, Vanilla CSS Design System
 - **Backend:** Python 3.14, FastAPI, Pydantic v2
-- **Database:** Supabase (PostgreSQL)
+- **Database:** Supabase (PostgreSQL) / SQLite
 - **External Search:** Exa AI (`exa-py`)
 - **Evidence Verification:** Google Gemini (`google-genai`, `gemini-3.5-flash-lite`)
 - **Scoring:** Deterministic Python rule engine (ECI v1.1)
 - **Evaluation:** Canonical offline fixture benchmark (25 cases, 18 dev / 7 held-out)
-- **Testing:** pytest (148 tests passing, 100%)
+- **Testing:** pytest (152 tests passing, 100%)
