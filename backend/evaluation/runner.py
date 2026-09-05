@@ -392,3 +392,10 @@ def format_benchmark_report(report: BenchmarkReport) -> str:
     lines.append("")
     lines.append("=" * 72)
     return "\n".join(lines)
+
+
+if __name__ == "__main__":
+    from evaluation.dataset import ALL_CASES
+    report = run_benchmark(ALL_CASES, split_name="all")
+    print(format_benchmark_report(report))
+
