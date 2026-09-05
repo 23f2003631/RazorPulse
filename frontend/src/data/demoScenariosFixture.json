@@ -1,0 +1,723 @@
+{
+  "scenarios": [
+    {
+      "scenario_name": "demo_strong",
+      "scenario_title": "Demo 1: Legitimate Festive Surge (UrbanCraft India)",
+      "semantic_expectation": "Strong external corroboration with aligned entity, timing, and credible independent news coverage.",
+      "merchant_name": "UrbanCraft India",
+      "anomaly_summary": "1606% velocity spike (1450 txns vs 85 baseline)",
+      "evidence_count": 3,
+      "eci_score": 100,
+      "eci_band": "very_strong",
+      "factors_summary": [
+        {
+          "category": "entity_match",
+          "points": 25.0,
+          "max": 25.0,
+          "explanation": "Direct entity match: evidence explicitly identifies the merchant or domain."
+        },
+        {
+          "category": "temporal_alignment",
+          "points": 25.0,
+          "max": 25.0,
+          "explanation": "Exact temporal alignment: event occurred within 0–48 hours of the anomaly."
+        },
+        {
+          "category": "explanation_support",
+          "points": 20.0,
+          "max": 20.0,
+          "explanation": "Strong explanation: evidence explicitly describes a major event (e.g. flash sale, viral spike, product launch) explaining transaction surge."
+        },
+        {
+          "category": "source_credibility",
+          "points": 20.0,
+          "max": 20.0,
+          "explanation": "High-credibility source providing direct, primary evidence."
+        },
+        {
+          "category": "independent_corroboration",
+          "points": 10.0,
+          "max": 10.0,
+          "explanation": "Corroborated across 3 independent claim groups (domain:economictimes.indiatimes.com, domain:urbancraft.in, domain:yourstory.com)."
+        }
+      ],
+      "contradictions": [],
+      "analyst_checklist": [
+        "Verify that the reported external event/campaign corresponds to the merchant's registered category and typical basket size.",
+        "Review transaction settlement accounts and merchant profile for UrbanCraft India.",
+        "Check current dispute / chargeback trajectory relative to increased transaction velocity."
+      ],
+      "dossier": {
+        "investigation_id": "11111111-1111-4111-8111-111111111111",
+        "generated_at": "2026-09-05T16:37:20.829835Z",
+        "pipeline_version": "0.3.0",
+        "eci_version": "v1.1",
+        "pipeline_metadata": null,
+        "anomaly_context": {
+          "risk_event_id": "10000000-0000-4000-8000-000000000001",
+          "merchant_name": "UrbanCraft India",
+          "merchant_domain": "urbancraft.in",
+          "anomaly_type": "transaction_velocity_spike",
+          "occurred_at": "2026-08-28T14:30:00+05:30",
+          "baseline_transaction_count": 85,
+          "observed_transaction_count": 1450,
+          "percentage_change": 1605.88,
+          "transaction_amount": null,
+          "currency": "INR",
+          "risk_reason": "Transaction velocity increased 17x above baseline over 3 hours.",
+          "geographic_info": "Bengaluru, Karnataka, IN"
+        },
+        "executive_summary": "RazorPulse discovered 3 external evidence item(s) for UrbanCraft India (3 verified). Verified evidence indicates a public real-world event matching the timing of the +1605.88% transaction anomaly. Event Corroboration Index is 100/100 (Very Strong External Corroboration).",
+        "eci_result": {
+          "eci_score": 100,
+          "band": "very_strong",
+          "band_label": "Very Strong External Corroboration",
+          "confidence_level": "HIGH",
+          "eci_version": "v1.1",
+          "positive_points": 100.0,
+          "penalty_points": 0.0,
+          "factors": [
+            {
+              "factor_id": "factor_entity_match",
+              "category": "entity_match",
+              "name": "Merchant Entity Match",
+              "raw_value": "direct_match",
+              "points_awarded": 25.0,
+              "max_possible_points": 25.0,
+              "explanation": "Direct entity match: evidence explicitly identifies the merchant or domain.",
+              "evidence_ids": [
+                "f84873b8-0743-4ae0-b560-311dd37dbf9f"
+              ]
+            },
+            {
+              "factor_id": "factor_temporal_alignment",
+              "category": "temporal_alignment",
+              "name": "Temporal Alignment",
+              "raw_value": "exact_match",
+              "points_awarded": 25.0,
+              "max_possible_points": 25.0,
+              "explanation": "Exact temporal alignment: event occurred within 0–48 hours of the anomaly.",
+              "evidence_ids": [
+                "f84873b8-0743-4ae0-b560-311dd37dbf9f"
+              ]
+            },
+            {
+              "factor_id": "factor_explanation_support",
+              "category": "explanation_support",
+              "name": "Anomaly Explanation Support",
+              "raw_value": "strong_explanation",
+              "points_awarded": 20.0,
+              "max_possible_points": 20.0,
+              "explanation": "Strong explanation: evidence explicitly describes a major event (e.g. flash sale, viral spike, product launch) explaining transaction surge.",
+              "evidence_ids": [
+                "f84873b8-0743-4ae0-b560-311dd37dbf9f"
+              ]
+            },
+            {
+              "factor_id": "factor_source_credibility",
+              "category": "source_credibility",
+              "name": "Source Credibility & Directness",
+              "raw_value": "high+strong_direct",
+              "points_awarded": 20.0,
+              "max_possible_points": 20.0,
+              "explanation": "High-credibility source providing direct, primary evidence.",
+              "evidence_ids": [
+                "f84873b8-0743-4ae0-b560-311dd37dbf9f"
+              ]
+            },
+            {
+              "factor_id": "factor_independent_corroboration",
+              "category": "independent_corroboration",
+              "name": "Independent Cross-Source Corroboration",
+              "raw_value": "3_independent_claim_groups",
+              "points_awarded": 10.0,
+              "max_possible_points": 10.0,
+              "explanation": "Corroborated across 3 independent claim groups (domain:economictimes.indiatimes.com, domain:urbancraft.in, domain:yourstory.com).",
+              "evidence_ids": [
+                "f84873b8-0743-4ae0-b560-311dd37dbf9f",
+                "8239bd2d-39b4-4721-9d5b-0ec0509138ac",
+                "a12e1cd2-86ed-4e0c-bdc9-206ad8466e3b"
+              ]
+            }
+          ],
+          "excluded_items": [],
+          "eligible_evidence_count": 3,
+          "is_zero_evidence": false,
+          "disclaimer": "The Event Corroboration Index (ECI) measures the strength of external evidence corroborating a legitimate contextual explanation for an observed anomaly. It does NOT represent a fraud determination, account clearance, or risk decision."
+        },
+        "evidence_count": 3,
+        "evidence_citations": [
+          {
+            "citation_id": "[E1]",
+            "evidence_id": "f84873b8-0743-4ae0-b560-311dd37dbf9f",
+            "url": "https://yourstory.com/2026/08/urbancraft-india-viral-handicraft-sale",
+            "title": "UrbanCraft India's Heritage Collection Goes Viral on Social Media",
+            "source_domain": "yourstory.com",
+            "source_type": "news_media",
+            "key_fact": "Festive collection launch on August 28",
+            "temporal_match": "exact_match",
+            "source_credibility": "high"
+          },
+          {
+            "citation_id": "[E2]",
+            "evidence_id": "8239bd2d-39b4-4721-9d5b-0ec0509138ac",
+            "url": "https://economictimes.indiatimes.com/industry/services/retail/urbancraft-records-record-surge/articleshow/998877.cms",
+            "title": "D2C Brand UrbanCraft Records Massive Surge During Festive Flash Sale",
+            "source_domain": "economictimes.indiatimes.com",
+            "source_type": "news_media",
+            "key_fact": "15-20x order surge recorded on Friday afternoon",
+            "temporal_match": "exact_match",
+            "source_credibility": "high"
+          },
+          {
+            "citation_id": "[E3]",
+            "evidence_id": "a12e1cd2-86ed-4e0c-bdc9-206ad8466e3b",
+            "url": "https://urbancraft.in/pages/festive-sale-2026",
+            "title": "Official Announcement: Festive Artisan Sale 2026",
+            "source_domain": "urbancraft.in",
+            "source_type": "merchant_official",
+            "key_fact": "Official festive sale began August 28",
+            "temporal_match": "exact_match",
+            "source_credibility": "high"
+          }
+        ],
+        "contradictions": [],
+        "evidence_gaps": [],
+        "verification_uncertainties": [],
+        "analyst_review_checklist": [
+          "Verify that the reported external event/campaign corresponds to the merchant's registered category and typical basket size.",
+          "Review transaction settlement accounts and merchant profile for UrbanCraft India.",
+          "Check current dispute / chargeback trajectory relative to increased transaction velocity."
+        ],
+        "search_queries_used": [
+          {
+            "intent": "timeframe_event",
+            "query_text": "\"UrbanCraft India\" news"
+          },
+          {
+            "intent": "merchant_announcement",
+            "query_text": "site:urbancraft.in launch"
+          }
+        ]
+      },
+      "evidence_items": [
+        {
+          "evidence_id": "f84873b8-0743-4ae0-b560-311dd37dbf9f",
+          "url": "https://yourstory.com/2026/08/urbancraft-india-viral-handicraft-sale",
+          "title": "UrbanCraft India's Heritage Collection Goes Viral on Social Media",
+          "source_domain": "yourstory.com",
+          "source_type": "news_media",
+          "published_at": "2026-08-28T11:00:00Z",
+          "retrieved_at": "2026-09-05T16:37:20.826985Z",
+          "content_snippet": "UrbanCraft India launched its nationwide artisan festive collection today, generating over 100,000 visitors within hours following celebrity endorsements.",
+          "highlights": [
+            "festive collection launch",
+            "over 100,000 visitors in hours"
+          ],
+          "discovery_query": "\"UrbanCraft India\" sale launch viral",
+          "discovery_query_intent": "commercial_campaign",
+          "external_score": 0.92
+        },
+        {
+          "evidence_id": "8239bd2d-39b4-4721-9d5b-0ec0509138ac",
+          "url": "https://economictimes.indiatimes.com/industry/services/retail/urbancraft-records-record-surge/articleshow/998877.cms",
+          "title": "D2C Brand UrbanCraft Records Massive Surge During Festive Flash Sale",
+          "source_domain": "economictimes.indiatimes.com",
+          "source_type": "news_media",
+          "published_at": "2026-08-28T16:00:00Z",
+          "retrieved_at": "2026-09-05T16:37:20.827030Z",
+          "content_snippet": "Artisan D2C platform UrbanCraft India saw orders surge 15-20x on Friday afternoon after kicking off its annual mega discount drive.",
+          "highlights": [
+            "orders surge 15-20x",
+            "annual mega discount drive"
+          ],
+          "discovery_query": "\"UrbanCraft India\" news August 2026",
+          "discovery_query_intent": "timeframe_event",
+          "external_score": 0.88
+        },
+        {
+          "evidence_id": "a12e1cd2-86ed-4e0c-bdc9-206ad8466e3b",
+          "url": "https://urbancraft.in/pages/festive-sale-2026",
+          "title": "Official Announcement: Festive Artisan Sale 2026",
+          "source_domain": "urbancraft.in",
+          "source_type": "merchant_official",
+          "published_at": "2026-08-28T09:00:00Z",
+          "retrieved_at": "2026-09-05T16:37:20.827040Z",
+          "content_snippet": "Welcome to UrbanCraft India's Annual Artisan Festive Sale! Enjoy up to 60% off across all handmade categories starting August 28.",
+          "highlights": [
+            "Annual Artisan Festive Sale",
+            "starting August 28"
+          ],
+          "discovery_query": "site:urbancraft.in launch OR sale OR announcement",
+          "discovery_query_intent": "merchant_announcement",
+          "external_score": 0.95
+        }
+      ],
+      "verification_items": [
+        {
+          "evidence_id": "f84873b8-0743-4ae0-b560-311dd37dbf9f",
+          "status": "verified",
+          "failure_reason": null,
+          "merchant_match": "direct_match",
+          "temporal_match": "exact_match",
+          "explanation_support": "strong_explanation",
+          "evidence_strength": "strong_direct",
+          "source_credibility": "high",
+          "event_category": "viral_campaign",
+          "key_facts": [
+            "Festive collection launch on August 28",
+            "Viral surge with 100k visitors"
+          ],
+          "contradictions_identified": [],
+          "uncertainties_noted": [],
+          "reasoning_summary": "Article directly reports massive demand surge for UrbanCraft India on the exact anomaly date."
+        },
+        {
+          "evidence_id": "8239bd2d-39b4-4721-9d5b-0ec0509138ac",
+          "status": "verified",
+          "failure_reason": null,
+          "merchant_match": "direct_match",
+          "temporal_match": "exact_match",
+          "explanation_support": "strong_explanation",
+          "evidence_strength": "strong_direct",
+          "source_credibility": "high",
+          "event_category": "flash_sale",
+          "key_facts": [
+            "15-20x order surge recorded on Friday afternoon"
+          ],
+          "contradictions_identified": [],
+          "uncertainties_noted": [],
+          "reasoning_summary": "Economic Times confirms 15-20x order surge matching transaction velocity spike."
+        },
+        {
+          "evidence_id": "a12e1cd2-86ed-4e0c-bdc9-206ad8466e3b",
+          "status": "verified",
+          "failure_reason": null,
+          "merchant_match": "direct_match",
+          "temporal_match": "exact_match",
+          "explanation_support": "strong_explanation",
+          "evidence_strength": "strong_direct",
+          "source_credibility": "high",
+          "event_category": "merchant_announcement",
+          "key_facts": [
+            "Official festive sale began August 28"
+          ],
+          "contradictions_identified": [],
+          "uncertainties_noted": [],
+          "reasoning_summary": "Merchant official domain confirms planned nationwide sale starting August 28."
+        }
+      ]
+    },
+    {
+      "scenario_name": "demo_zero",
+      "scenario_title": "Demo 2: Unexplained Velocity Spike (QuickDeal Bazaar)",
+      "semantic_expectation": "Zero external evidence found; clean zero-evidence state directing analyst to internal review.",
+      "merchant_name": "QuickDeal Bazaar",
+      "anomaly_summary": "5400% velocity spike (2200 txns vs 40 baseline)",
+      "evidence_count": 0,
+      "eci_score": 0,
+      "eci_band": "low",
+      "factors_summary": [
+        {
+          "category": "explanation_support",
+          "points": 0.0,
+          "max": 100.0,
+          "explanation": "No relevant external public web evidence was discovered for this merchant and timeframe."
+        }
+      ],
+      "contradictions": [],
+      "analyst_checklist": [
+        "Contact merchant directly or review internal support communications regarding recent promotional activity.",
+        "Review transaction settlement accounts and merchant profile for QuickDeal Bazaar.",
+        "Check current dispute / chargeback trajectory relative to increased transaction velocity."
+      ],
+      "dossier": {
+        "investigation_id": "22222222-2222-4222-8222-222222222222",
+        "generated_at": "2026-09-05T16:37:20.829970Z",
+        "pipeline_version": "0.3.0",
+        "eci_version": "v1.1",
+        "pipeline_metadata": null,
+        "anomaly_context": {
+          "risk_event_id": "20000000-0000-4000-8000-000000000002",
+          "merchant_name": "QuickDeal Bazaar",
+          "merchant_domain": "quickdealbazaar.com",
+          "anomaly_type": "transaction_velocity_spike",
+          "occurred_at": "2026-08-30T02:15:00+05:30",
+          "baseline_transaction_count": 40,
+          "observed_transaction_count": 2200,
+          "percentage_change": 5400.0,
+          "transaction_amount": null,
+          "currency": "INR",
+          "risk_reason": "Extreme velocity spike at 2:15 AM IST (55x baseline).",
+          "geographic_info": "New Delhi, Delhi, IN"
+        },
+        "executive_summary": "RazorPulse investigated an observed +5400.0% surge in transaction activity for QuickDeal Bazaar on 2026-08-30. No relevant public external web evidence, media coverage, or announcements were discovered. External Corroboration is Low (ECI: 0/100). The analyst should proceed with standard internal verification.",
+        "eci_result": {
+          "eci_score": 0,
+          "band": "low",
+          "band_label": "Low External Corroboration",
+          "confidence_level": "HIGH",
+          "eci_version": "v1.1",
+          "positive_points": 0.0,
+          "penalty_points": 0.0,
+          "factors": [
+            {
+              "factor_id": "zero_verified_evidence",
+              "category": "explanation_support",
+              "name": "No External Evidence Found",
+              "raw_value": "zero_verified_evidence",
+              "points_awarded": 0.0,
+              "max_possible_points": 100.0,
+              "explanation": "No relevant external public web evidence was discovered for this merchant and timeframe.",
+              "evidence_ids": []
+            }
+          ],
+          "excluded_items": [],
+          "eligible_evidence_count": 0,
+          "is_zero_evidence": true,
+          "disclaimer": "The Event Corroboration Index (ECI) measures the strength of external evidence corroborating a legitimate contextual explanation for an observed anomaly. It does NOT represent a fraud determination, account clearance, or risk decision."
+        },
+        "evidence_count": 0,
+        "evidence_citations": [],
+        "contradictions": [],
+        "evidence_gaps": [
+          "No public external coverage, press release, or merchant announcement found for this anomaly period."
+        ],
+        "verification_uncertainties": [],
+        "analyst_review_checklist": [
+          "Contact merchant directly or review internal support communications regarding recent promotional activity.",
+          "Review transaction settlement accounts and merchant profile for QuickDeal Bazaar.",
+          "Check current dispute / chargeback trajectory relative to increased transaction velocity."
+        ],
+        "search_queries_used": [
+          {
+            "intent": "timeframe_event",
+            "query_text": "\"QuickDeal Bazaar\" news"
+          },
+          {
+            "intent": "merchant_announcement",
+            "query_text": "site:quickdealbazaar.com launch"
+          }
+        ]
+      },
+      "evidence_items": [],
+      "verification_items": []
+    },
+    {
+      "scenario_name": "demo_contradicted",
+      "scenario_title": "Demo 3: Disputed Commercial Claim (TrendWear Daily)",
+      "semantic_expectation": "Contradiction identified; official merchant notice refutes active flash sale, citing duplicate technical glitch.",
+      "merchant_name": "TrendWear Daily",
+      "anomaly_summary": "700% velocity spike (400 txns vs 50 baseline)",
+      "evidence_count": 2,
+      "eci_score": 4,
+      "eci_band": "low",
+      "factors_summary": [
+        {
+          "category": "entity_match",
+          "points": 12.5,
+          "max": 25.0,
+          "explanation": "Direct entity match: evidence explicitly identifies the merchant or domain."
+        },
+        {
+          "category": "temporal_alignment",
+          "points": 12.5,
+          "max": 25.0,
+          "explanation": "Exact temporal alignment: event occurred within 0–48 hours of the anomaly."
+        },
+        {
+          "category": "explanation_support",
+          "points": 3.0,
+          "max": 20.0,
+          "explanation": "Weak explanation: minor or tangential promotional mention."
+        },
+        {
+          "category": "source_credibility",
+          "points": 1.0,
+          "max": 20.0,
+          "explanation": "Source credibility is unconfirmed or evidentiary strength is weak."
+        },
+        {
+          "category": "independent_corroboration",
+          "points": 0.0,
+          "max": 10.0,
+          "explanation": "Single claim group identified; no independent cross-source corroboration."
+        },
+        {
+          "category": "gating_exclusion",
+          "points": 0.0,
+          "max": 0.0,
+          "explanation": "Aggregate positive points were capped to 29 because all eligible sources have limited authority (e.g. unverified social posts)."
+        },
+        {
+          "category": "contradiction_penalty",
+          "points": -25.0,
+          "max": 0.0,
+          "explanation": "Severe discrepancies identified across sources (2 contradictions recorded)."
+        }
+      ],
+      "contradictions": [
+        "Article relates to 2024, not August 2026.",
+        "Merchant explicitly refutes flash sale — cites technical malfunction."
+      ],
+      "analyst_checklist": [
+        "Review transaction settlement accounts and merchant profile for TrendWear Daily.",
+        "Check current dispute / chargeback trajectory relative to increased transaction velocity.",
+        "Investigate contradiction / discrepancy flagged in [E1] (inc42.com): Article relates to 2024, not August 2026.",
+        "Verify publication timeframe for [E1] (inc42.com) -- temporal match assessed as 'historical_previous'.",
+        "Investigate contradiction / discrepancy flagged in [E2] (twitter.com): Merchant explicitly refutes flash sale — cites technical malfunction.",
+        "Investigate identified evidence discrepancy: Article relates to 2024, not August 2026."
+      ],
+      "dossier": {
+        "investigation_id": "33333333-3333-4333-8333-333333333333",
+        "generated_at": "2026-09-05T16:37:20.830233Z",
+        "pipeline_version": "0.3.0",
+        "eci_version": "v1.1",
+        "pipeline_metadata": null,
+        "anomaly_context": {
+          "risk_event_id": "30000000-0000-4000-8000-000000000003",
+          "merchant_name": "TrendWear Daily",
+          "merchant_domain": "trendweardaily.in",
+          "anomaly_type": "transaction_velocity_spike",
+          "occurred_at": "2026-08-29T18:00:00+05:30",
+          "baseline_transaction_count": 50,
+          "observed_transaction_count": 400,
+          "percentage_change": 700.0,
+          "transaction_amount": null,
+          "currency": "INR",
+          "risk_reason": "Sudden 8x velocity spike on Saturday evening.",
+          "geographic_info": null
+        },
+        "executive_summary": "RazorPulse discovered 2 external evidence item(s) for TrendWear Daily (2 verified), but verification indicates weak, unaligned, or contradicted contextual connection to the transaction anomaly. Event Corroboration Index is 4/100 (Low External Corroboration).",
+        "eci_result": {
+          "eci_score": 4,
+          "band": "low",
+          "band_label": "Low External Corroboration",
+          "confidence_level": "LOW",
+          "eci_version": "v1.1",
+          "positive_points": 29.0,
+          "penalty_points": 25.0,
+          "factors": [
+            {
+              "factor_id": "factor_entity_match",
+              "category": "entity_match",
+              "name": "Merchant Entity Match",
+              "raw_value": "direct_match",
+              "points_awarded": 12.5,
+              "max_possible_points": 25.0,
+              "explanation": "Direct entity match: evidence explicitly identifies the merchant or domain.",
+              "evidence_ids": [
+                "793a9670-8fd2-4b38-8a88-999dd4a5d0e3"
+              ]
+            },
+            {
+              "factor_id": "factor_temporal_alignment",
+              "category": "temporal_alignment",
+              "name": "Temporal Alignment",
+              "raw_value": "exact_match",
+              "points_awarded": 12.5,
+              "max_possible_points": 25.0,
+              "explanation": "Exact temporal alignment: event occurred within 0–48 hours of the anomaly.",
+              "evidence_ids": [
+                "68da22ca-f80d-430e-8dce-bca13bb8a6b3"
+              ]
+            },
+            {
+              "factor_id": "factor_explanation_support",
+              "category": "explanation_support",
+              "name": "Anomaly Explanation Support",
+              "raw_value": "weak_explanation",
+              "points_awarded": 3.0,
+              "max_possible_points": 20.0,
+              "explanation": "Weak explanation: minor or tangential promotional mention.",
+              "evidence_ids": [
+                "793a9670-8fd2-4b38-8a88-999dd4a5d0e3"
+              ]
+            },
+            {
+              "factor_id": "factor_source_credibility",
+              "category": "source_credibility",
+              "name": "Source Credibility & Directness",
+              "raw_value": "high+contradicted",
+              "points_awarded": 1.0,
+              "max_possible_points": 20.0,
+              "explanation": "Source credibility is unconfirmed or evidentiary strength is weak.",
+              "evidence_ids": [
+                "68da22ca-f80d-430e-8dce-bca13bb8a6b3"
+              ]
+            },
+            {
+              "factor_id": "factor_independent_corroboration",
+              "category": "independent_corroboration",
+              "name": "Independent Cross-Source Corroboration",
+              "raw_value": "1_independent_claim_groups",
+              "points_awarded": 0.0,
+              "max_possible_points": 10.0,
+              "explanation": "Single claim group identified; no independent cross-source corroboration.",
+              "evidence_ids": [
+                "793a9670-8fd2-4b38-8a88-999dd4a5d0e3"
+              ]
+            },
+            {
+              "factor_id": "ceiling_authority_cap",
+              "category": "gating_exclusion",
+              "name": "Source Authority Ceiling",
+              "raw_value": "max_ceiling_29.0",
+              "points_awarded": 0.0,
+              "max_possible_points": 0.0,
+              "explanation": "Aggregate positive points were capped to 29 because all eligible sources have limited authority (e.g. unverified social posts).",
+              "evidence_ids": [
+                "793a9670-8fd2-4b38-8a88-999dd4a5d0e3",
+                "68da22ca-f80d-430e-8dce-bca13bb8a6b3"
+              ]
+            },
+            {
+              "factor_id": "penalty_contradictions",
+              "category": "contradiction_penalty",
+              "name": "Contradiction Deduction",
+              "raw_value": "2_contradictions",
+              "points_awarded": -25.0,
+              "max_possible_points": 0.0,
+              "explanation": "Severe discrepancies identified across sources (2 contradictions recorded).",
+              "evidence_ids": [
+                "793a9670-8fd2-4b38-8a88-999dd4a5d0e3",
+                "68da22ca-f80d-430e-8dce-bca13bb8a6b3"
+              ]
+            }
+          ],
+          "excluded_items": [],
+          "eligible_evidence_count": 2,
+          "is_zero_evidence": false,
+          "disclaimer": "The Event Corroboration Index (ECI) measures the strength of external evidence corroborating a legitimate contextual explanation for an observed anomaly. It does NOT represent a fraud determination, account clearance, or risk decision."
+        },
+        "evidence_count": 2,
+        "evidence_citations": [
+          {
+            "citation_id": "[E1]",
+            "evidence_id": "793a9670-8fd2-4b38-8a88-999dd4a5d0e3",
+            "url": "https://inc42.com/buzz/trendwear-daily-diwali-campaign-2024",
+            "title": "TrendWear Daily Gears Up for Diwali 2024 with Flash Deals",
+            "source_domain": "inc42.com",
+            "source_type": "industry_portal",
+            "key_fact": "Diwali sale occurred in October 2024",
+            "temporal_match": "historical_previous",
+            "source_credibility": "medium"
+          },
+          {
+            "citation_id": "[E2]",
+            "evidence_id": "68da22ca-f80d-430e-8dce-bca13bb8a6b3",
+            "url": "https://twitter.com/trendweardaily/status/1829000000000000000",
+            "title": "TrendWear Daily Official Support Notice",
+            "source_domain": "twitter.com",
+            "source_type": "social_community",
+            "key_fact": "Technical bug causing duplicate checkouts",
+            "temporal_match": "exact_match",
+            "source_credibility": "high"
+          }
+        ],
+        "contradictions": [
+          "Article relates to 2024, not August 2026.",
+          "Merchant explicitly refutes flash sale — cites technical malfunction."
+        ],
+        "evidence_gaps": [],
+        "verification_uncertainties": [],
+        "analyst_review_checklist": [
+          "Review transaction settlement accounts and merchant profile for TrendWear Daily.",
+          "Check current dispute / chargeback trajectory relative to increased transaction velocity.",
+          "Investigate contradiction / discrepancy flagged in [E1] (inc42.com): Article relates to 2024, not August 2026.",
+          "Verify publication timeframe for [E1] (inc42.com) -- temporal match assessed as 'historical_previous'.",
+          "Investigate contradiction / discrepancy flagged in [E2] (twitter.com): Merchant explicitly refutes flash sale — cites technical malfunction.",
+          "Investigate identified evidence discrepancy: Article relates to 2024, not August 2026."
+        ],
+        "search_queries_used": [
+          {
+            "intent": "timeframe_event",
+            "query_text": "\"TrendWear Daily\" news"
+          },
+          {
+            "intent": "merchant_announcement",
+            "query_text": "site:trendweardaily.in launch"
+          }
+        ]
+      },
+      "evidence_items": [
+        {
+          "evidence_id": "793a9670-8fd2-4b38-8a88-999dd4a5d0e3",
+          "url": "https://inc42.com/buzz/trendwear-daily-diwali-campaign-2024",
+          "title": "TrendWear Daily Gears Up for Diwali 2024 with Flash Deals",
+          "source_domain": "inc42.com",
+          "source_type": "industry_portal",
+          "published_at": "2024-10-15T10:00:00Z",
+          "retrieved_at": "2026-09-05T16:37:20.827466Z",
+          "content_snippet": "Apparel startup TrendWear Daily announced heavy discounts for Diwali 2024.",
+          "highlights": [
+            "Diwali 2024 flash deals"
+          ],
+          "discovery_query": "\"TrendWear Daily\" sale campaign",
+          "discovery_query_intent": "commercial_campaign",
+          "external_score": 0.65
+        },
+        {
+          "evidence_id": "68da22ca-f80d-430e-8dce-bca13bb8a6b3",
+          "url": "https://twitter.com/trendweardaily/status/1829000000000000000",
+          "title": "TrendWear Daily Official Support Notice",
+          "source_domain": "twitter.com",
+          "source_type": "social_community",
+          "published_at": "2026-08-29T18:30:00Z",
+          "retrieved_at": "2026-09-05T16:37:20.827474Z",
+          "content_snippet": "Notice to customers: We are experiencing a technical bug causing duplicate checkout requests. No flash sale or promotional discount is currently active.",
+          "highlights": [
+            "technical bug causing duplicate checkout",
+            "No flash sale is currently active"
+          ],
+          "discovery_query": "\"TrendWear Daily\" news August 2026",
+          "discovery_query_intent": "timeframe_event",
+          "external_score": 0.85
+        }
+      ],
+      "verification_items": [
+        {
+          "evidence_id": "793a9670-8fd2-4b38-8a88-999dd4a5d0e3",
+          "status": "verified",
+          "failure_reason": null,
+          "merchant_match": "direct_match",
+          "temporal_match": "historical_previous",
+          "explanation_support": "weak_explanation",
+          "evidence_strength": "weak_circumstantial",
+          "source_credibility": "medium",
+          "event_category": null,
+          "key_facts": [
+            "Diwali sale occurred in October 2024"
+          ],
+          "contradictions_identified": [
+            "Article relates to 2024, not August 2026."
+          ],
+          "uncertainties_noted": [
+            "Timing is completely disconnected from August 2026."
+          ],
+          "reasoning_summary": "Historical article from 2024 cannot explain August 2026 spike."
+        },
+        {
+          "evidence_id": "68da22ca-f80d-430e-8dce-bca13bb8a6b3",
+          "status": "verified",
+          "failure_reason": null,
+          "merchant_match": "direct_match",
+          "temporal_match": "exact_match",
+          "explanation_support": "no_explanation",
+          "evidence_strength": "contradicted",
+          "source_credibility": "high",
+          "event_category": null,
+          "key_facts": [
+            "Technical bug causing duplicate checkouts",
+            "No flash sale active"
+          ],
+          "contradictions_identified": [
+            "Merchant explicitly refutes flash sale — cites technical malfunction."
+          ],
+          "uncertainties_noted": [],
+          "reasoning_summary": "Merchant directly refutes commercial promotion and cites checkout bug."
+        }
+      ]
+    }
+  ]
+}

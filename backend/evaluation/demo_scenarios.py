@@ -60,10 +60,22 @@ def run_demo_case(
     scenario_title: str,
     semantic_expectation: str,
 ) -> DemoScenarioResult:
-    """
-    Execute an evaluation case through the offline scoring and dossier pipeline.
-    """
-    investigation_id = uuid4()
+    scenario_uuids = {
+        "demo_strong": (
+            UUID("11111111-1111-4111-8111-111111111111"),
+            "10000000-0000-4000-8000-000000000001",
+        ),
+        "demo_zero": (
+            UUID("22222222-2222-4222-8222-222222222222"),
+            "20000000-0000-4000-8000-000000000002",
+        ),
+        "demo_contradicted": (
+            UUID("33333333-3333-4333-8333-333333333333"),
+            "30000000-0000-4000-8000-000000000003",
+        ),
+    }
+    inv_id, evt_id = scenario_uuids.get(scenario_name, (uuid4(), str(uuid4())))
+    investigation_id = inv_id
     evidence_items = eval_case.evidence_items
     verification_items = list(eval_case.verification_items)
 
@@ -85,7 +97,7 @@ def run_demo_case(
     )
 
     risk_event_dict = {
-        "id": str(uuid4()),
+        "id": evt_id,
         "merchant_name": eval_case.merchant_name,
         "merchant_domain": eval_case.merchant_domain,
         "anomaly_type": eval_case.anomaly_type,
