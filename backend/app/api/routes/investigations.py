@@ -21,6 +21,8 @@ from app.repositories import investigation_repository
 from app.schemas.dossier import EvidenceDossier
 from app.schemas.evidence import NormalizedEvidence
 from app.schemas.investigation import (
+    DemoScenarioListResponse,
+    DemoScenarioResponse,
     InvestigationCreate,
     InvestigationDetailResponse,
     InvestigationListResponse,
@@ -68,6 +70,39 @@ async def create_investigation(request: InvestigationCreate):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+@router.get("/demo-scenarios", response_model=DemoScenarioListResponse)
+async def get_demo_scenarios_endpoint():
+    """
+    Retrieve deterministic demonstration scenarios for offline evaluation.
+
+    Executes in-memory without calling Exa, Gemini, or Supabase.
+    Provides a network-independent demonstration path for analyst review.
+    """
+    from evaluation.demo_scenarios import get_demo_scenarios
+
+    demos = get_demo_scenarios()
+    scenarios = [
+        DemoScenarioResponse(
+            scenario_name=d.scenario_name,
+            scenario_title=d.scenario_title,
+            semantic_expectation=d.semantic_expectation,
+            merchant_name=d.merchant_name,
+            anomaly_summary=d.anomaly_summary,
+            evidence_count=d.evidence_count,
+            eci_score=d.eci_score,
+            eci_band=d.eci_band,
+            factors_summary=d.factors_summary,
+            contradictions=d.contradictions,
+            analyst_checklist=d.analyst_checklist,
+            dossier=d.dossier,
+            evidence_items=d.evidence_items,
+            verification_items=d.verification_items,
+        )
+        for d in demos
+    ]
+    return DemoScenarioListResponse(scenarios=scenarios)
+
+
 @router.get("/{investigation_id}", response_model=InvestigationDetailResponse)
 async def get_investigation(investigation_id: UUID):
     """
@@ -103,6 +138,7 @@ async def get_investigation(investigation_id: UUID):
             dossier=dossier,
             evidence_items=evidence_items,
             verification_items=verification_items,
+            pipeline_metadata=dossier.pipeline_metadata if dossier else None,
         )
     except ResourceNotFoundError:
         raise HTTPException(status_code=404, detail=f"Investigation not found: {investigation_id}")

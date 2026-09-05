@@ -17,7 +17,7 @@ They reflect realistic evidence fixtures, and the runner reports the exact ECI
 and factor breakdown computed by the engine.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Optional
 from uuid import UUID, uuid4
 
@@ -50,6 +50,8 @@ class DemoScenarioResult:
     contradictions: list[str]
     analyst_checklist: list[str]
     dossier: EvidenceDossier
+    evidence_items: list[NormalizedEvidence] = field(default_factory=list)
+    verification_items: list[EvidenceVerificationItem] = field(default_factory=list)
 
 
 def run_demo_case(
@@ -133,6 +135,8 @@ def run_demo_case(
         contradictions=verification_result.overall_contradictions,
         analyst_checklist=dossier.analyst_review_checklist,
         dossier=dossier,
+        evidence_items=evidence_items,
+        verification_items=verification_items,
     )
 
 

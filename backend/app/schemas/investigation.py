@@ -100,3 +100,27 @@ class InvestigationListResponse(BaseModel):
     """Paginated list of investigations."""
     data: list[InvestigationResponse]
     count: int
+
+
+class DemoScenarioResponse(BaseModel):
+    """Deterministic demonstration scenario representation for offline showcase."""
+    scenario_name: str
+    scenario_title: str
+    semantic_expectation: str
+    merchant_name: str
+    anomaly_summary: str
+    evidence_count: int
+    eci_score: int
+    eci_band: str
+    factors_summary: list[dict]
+    contradictions: list[str]
+    analyst_checklist: list[str]
+    dossier: EvidenceDossier
+    evidence_items: list[NormalizedEvidence] = Field(default_factory=list)
+    verification_items: list[EvidenceVerificationItem] = Field(default_factory=list)
+
+
+class DemoScenarioListResponse(BaseModel):
+    """List of deterministic demo scenarios."""
+    scenarios: list[DemoScenarioResponse]
+
