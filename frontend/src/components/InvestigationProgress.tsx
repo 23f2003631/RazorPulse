@@ -41,25 +41,26 @@ export const InvestigationProgress: React.FC<InvestigationProgressProps> = ({
   return (
     <div
       style={{
-        padding: "1.75rem",
+        padding: "1.25rem",
         backgroundColor: "var(--bg-surface)",
-        border: "1px solid var(--border-medium)",
-        borderRadius: "var(--radius-lg)",
-        margin: "1.5rem 0",
+        border: "1px solid var(--border-subtle)",
+        borderRadius: "var(--radius-card)",
+        boxShadow: "var(--shadow-card)",
+        margin: "1rem 0",
       }}
     >
-      <div style={{ marginBottom: "1.25rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+      <div style={{ marginBottom: "1rem", display: "flex", alignItems: "center", justifyContent: "space-between" }}>
         <div>
           <h3 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-primary)" }}>
             Investigation In Progress
           </h3>
-          <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.2rem" }}>
+          <p style={{ fontSize: "0.78rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
             Executing synchronous multi-source external verification pipeline
           </p>
         </div>
         {!isFailed && (
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--accent-primary)", fontSize: "0.8rem", fontWeight: 600 }}>
-            <Loader2 size={16} className="animate-spin" />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", color: "var(--brand-primary)", fontSize: "0.78rem", fontWeight: 600 }}>
+            <Loader2 size={15} className="animate-spin" />
             <span>Processing Live Stage</span>
           </div>
         )}
@@ -70,7 +71,7 @@ export const InvestigationProgress: React.FC<InvestigationProgressProps> = ({
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "1rem",
+          gap: "0.75rem",
           position: "relative",
         }}
       >
@@ -84,64 +85,64 @@ export const InvestigationProgress: React.FC<InvestigationProgressProps> = ({
             <div
               key={stage.id}
               style={{
-                padding: "1rem",
-                borderRadius: "var(--radius-md)",
+                padding: "0.85rem 1rem",
+                borderRadius: "var(--radius-sm)",
                 backgroundColor: isCurrent
-                  ? "var(--accent-primary-subtle)"
+                  ? "var(--brand-primary-subtle)"
                   : isDone
-                  ? "rgba(16, 185, 129, 0.06)"
+                  ? "var(--band-very-strong-bg)"
                   : isErrorStage
                   ? "var(--contradiction-bg)"
-                  : "var(--bg-surface-elevated)",
+                  : "var(--bg-app)",
                 border: "1px solid",
                 borderColor: isCurrent
-                  ? "var(--accent-primary-border)"
+                  ? "var(--brand-primary-border)"
                   : isDone
-                  ? "rgba(16, 185, 129, 0.3)"
+                  ? "var(--band-very-strong-border)"
                   : isErrorStage
                   ? "var(--contradiction-border)"
                   : "var(--border-subtle)",
                 transition: "all var(--transition-normal)",
               }}
             >
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.4rem" }}>
                 <div
                   style={{
-                    width: "28px",
-                    height: "28px",
+                    width: "26px",
+                    height: "26px",
                     borderRadius: "50%",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                     backgroundColor: isCurrent
-                      ? "var(--accent-primary)"
+                      ? "var(--brand-primary)"
                       : isDone
-                      ? "#10B981"
+                      ? "var(--band-very-strong)"
                       : isErrorStage
                       ? "var(--contradiction-color)"
-                      : "rgba(255, 255, 255, 0.05)",
+                      : "#E2E8F0",
                     color: isDone || isCurrent || isErrorStage ? "#FFFFFF" : "var(--text-muted)",
                   }}
                 >
                   {isCurrent ? (
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={13} className="animate-spin" />
                   ) : isDone ? (
-                    <CheckCircle2 size={16} />
+                    <CheckCircle2 size={14} />
                   ) : isErrorStage ? (
-                    <XCircle size={16} />
+                    <XCircle size={14} />
                   ) : (
-                    <Icon size={14} />
+                    <Icon size={13} />
                   )}
                 </div>
-                <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontWeight: 600 }}>
+                <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", fontWeight: 600 }}>
                   0{idx + 1}
                 </span>
               </div>
 
-              <div style={{ fontSize: "0.85rem", fontWeight: 600, color: isErrorStage ? "#FCA5A5" : "var(--text-primary)" }}>
+              <div style={{ fontSize: "0.82rem", fontWeight: 600, color: isErrorStage ? "var(--contradiction-text)" : "var(--text-primary)" }}>
                 {stage.label}
               </div>
-              <div style={{ fontSize: "0.72rem", color: "var(--text-muted)", marginTop: "0.2rem" }}>
+              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginTop: "0.15rem" }}>
                 {stage.desc}
               </div>
             </div>

@@ -23,10 +23,10 @@ export const DemoScenarioSelector: React.FC<DemoScenarioSelectorProps> = ({
 
   if (!scenarios || scenarios.length === 0) {
     return (
-      <div className="panel" style={{ padding: "2.5rem", textAlign: "center" }}>
-        <AlertTriangle size={32} color="#F59E0B" style={{ margin: "0 auto 1rem auto" }} />
-        <h3 style={{ fontSize: "1.1rem", fontWeight: 600 }}>Demo Scenarios Unavailable</h3>
-        <p style={{ color: "var(--text-secondary)", fontSize: "0.85rem", marginTop: "0.5rem" }}>
+      <div className="card" style={{ padding: "2.5rem", textAlign: "center" }}>
+        <AlertTriangle size={28} color="var(--band-moderate)" style={{ margin: "0 auto 0.75rem auto" }} />
+        <h3 style={{ fontSize: "1rem", fontWeight: 600 }}>Demo Scenarios Unavailable</h3>
+        <p style={{ color: "var(--text-secondary)", fontSize: "0.82rem", marginTop: "0.25rem" }}>
           The backend did not return any demo scenarios. Please ensure the server is running.
         </p>
       </div>
@@ -35,7 +35,7 @@ export const DemoScenarioSelector: React.FC<DemoScenarioSelectorProps> = ({
 
   const selectedScenario = scenarios[selectedIndex] || scenarios[0];
 
-  // Adapt the demo scenario to an InvestigationDetailResponse for DossierView
+  // Adapt demo scenario to InvestigationDetailResponse for DossierView
   const adaptedInvestigation: InvestigationDetailResponse = {
     id: selectedScenario.dossier.investigation_id,
     risk_event_id: selectedScenario.dossier.anomaly_context.risk_event_id,
@@ -52,25 +52,25 @@ export const DemoScenarioSelector: React.FC<DemoScenarioSelectorProps> = ({
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
       {/* Demo Mode Notice Banner */}
       <div
         style={{
-          padding: "1rem 1.25rem",
-          backgroundColor: "rgba(245, 158, 11, 0.08)",
-          border: "1px solid rgba(245, 158, 11, 0.25)",
-          borderRadius: "var(--radius-lg)",
+          padding: "0.85rem 1.15rem",
+          backgroundColor: "var(--band-moderate-bg)",
+          border: "1px solid var(--band-moderate-border)",
+          borderRadius: "var(--radius-sm)",
           display: "flex",
           alignItems: "flex-start",
-          gap: "0.875rem",
+          gap: "0.75rem",
         }}
       >
-        <Sparkles size={20} color="#F59E0B" style={{ flexShrink: 0, marginTop: "2px" }} />
+        <Sparkles size={18} color="var(--band-moderate)" style={{ flexShrink: 0, marginTop: "2px" }} />
         <div>
-          <div style={{ fontWeight: 600, color: "#F59E0B", fontSize: "0.9rem" }}>
+          <div style={{ fontWeight: 600, color: "var(--band-moderate-text)", fontSize: "0.85rem" }}>
             Deterministic Demonstration Mode (Offline Evaluation)
           </div>
-          <p style={{ fontSize: "0.8rem", color: "var(--band-moderate-text)", marginTop: "0.2rem", lineHeight: 1.45 }}>
+          <p style={{ fontSize: "0.75rem", color: "var(--band-moderate-text)", marginTop: "0.15rem", lineHeight: 1.45 }}>
             Deterministic demo mode provides a network-independent demonstration path for the external discovery and verification pipeline. These 3 canonical scenarios demonstrate strong external corroboration, clean zero-evidence discovery, and discrepancy handling without calling external search or LLM APIs.
           </p>
         </div>
@@ -78,14 +78,14 @@ export const DemoScenarioSelector: React.FC<DemoScenarioSelectorProps> = ({
 
       {/* Scenario Cards Selector */}
       <div>
-        <div style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-muted)", fontWeight: 600, marginBottom: "0.75rem" }}>
+        <div style={{ fontSize: "0.7rem", textTransform: "uppercase", letterSpacing: "0.04em", color: "var(--text-muted)", fontWeight: 600, marginBottom: "0.5rem" }}>
           Select Canonical Scenario Archetype ({scenarios.length})
         </div>
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))",
-            gap: "1rem",
+            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+            gap: "0.85rem",
           }}
         >
           {scenarios.map((scenario, idx) => {
@@ -96,55 +96,55 @@ export const DemoScenarioSelector: React.FC<DemoScenarioSelectorProps> = ({
                 key={scenario.scenario_name}
                 onClick={() => setSelectedIndex(idx)}
                 style={{
-                  padding: "1.25rem",
-                  backgroundColor: isSelected ? "var(--bg-surface-elevated)" : "var(--bg-surface)",
+                  padding: "1rem 1.15rem",
+                  backgroundColor: "var(--bg-surface)",
                   border: "1px solid",
-                  borderColor: isSelected ? "var(--accent-primary)" : "var(--border-subtle)",
-                  borderRadius: "var(--radius-lg)",
+                  borderColor: isSelected ? "var(--brand-primary)" : "var(--border-subtle)",
+                  borderRadius: "var(--radius-card)",
                   cursor: "pointer",
-                  boxShadow: isSelected ? "0 0 0 1px var(--accent-primary)" : "var(--shadow-sm)",
+                  boxShadow: isSelected ? "0 0 0 1px var(--brand-primary), var(--shadow-sm)" : "var(--shadow-card)",
                   transition: "all var(--transition-fast)",
                   display: "flex",
                   flexDirection: "column",
                   justifyContent: "space-between",
-                  gap: "0.75rem",
+                  gap: "0.65rem",
                 }}
               >
                 <div>
-                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                    <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.35rem" }}>
+                    <span style={{ fontSize: "0.68rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)" }}>
                       SCENARIO 0{idx + 1}
                     </span>
                     <BandBadge band={scenario.eci_band} />
                   </div>
 
-                  <h3 style={{ fontSize: "1rem", fontWeight: 700, color: "var(--text-primary)" }}>
+                  <h3 style={{ fontSize: "0.95rem", fontWeight: 700, color: "var(--text-primary)" }}>
                     {scenario.merchant_name}
                   </h3>
 
-                  <div style={{ fontSize: "0.8rem", color: "#F87171", fontWeight: 600, marginTop: "0.2rem" }}>
+                  <div style={{ fontSize: "0.75rem", color: "#B91C1C", fontWeight: 600, marginTop: "0.15rem" }}>
                     {scenario.anomaly_summary}
                   </div>
 
-                  <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", marginTop: "0.5rem", lineHeight: 1.4 }}>
+                  <p style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: "0.35rem", lineHeight: 1.4 }}>
                     {scenario.semantic_expectation}
                   </p>
                 </div>
 
                 <div
                   style={{
-                    paddingTop: "0.75rem",
+                    paddingTop: "0.65rem",
                     borderTop: "1px solid var(--border-subtle)",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    fontSize: "0.75rem",
+                    fontSize: "0.72rem",
                   }}
                 >
                   <span style={{ color: "var(--text-muted)" }}>
                     Discovered Evidence: <strong style={{ color: "var(--text-primary)" }}>{scenario.evidence_count} items</strong>
                   </span>
-                  <span style={{ fontWeight: 700, color: isSelected ? "var(--accent-primary)" : "var(--text-primary)", fontFamily: "var(--font-mono)" }}>
+                  <span style={{ fontWeight: 700, color: isSelected ? "var(--brand-primary)" : "var(--text-primary)", fontFamily: "var(--font-mono)", fontVariantNumeric: "tabular-nums" }}>
                     ECI: {scenario.eci_score}/100
                   </span>
                 </div>
@@ -155,7 +155,7 @@ export const DemoScenarioSelector: React.FC<DemoScenarioSelectorProps> = ({
       </div>
 
       {/* Render Selected Scenario Dossier */}
-      <div style={{ marginTop: "1rem" }}>
+      <div style={{ marginTop: "0.5rem" }}>
         <DossierView
           investigation={adaptedInvestigation}
           onBackToQueue={onBackToQueue}

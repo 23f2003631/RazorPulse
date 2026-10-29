@@ -67,29 +67,29 @@ export const EvidenceVault: React.FC<EvidenceVaultProps> = ({
   return (
     <div className="page-container">
       {/* Header bar */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "1rem", marginBottom: "1.5rem" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "0.75rem", marginBottom: "0.25rem" }}>
         <div>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-            <Database size={22} color="var(--accent-primary)" />
-            <h1 style={{ fontSize: "1.4rem", fontWeight: 700, color: "var(--text-primary)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "0.45rem" }}>
+            <Database size={20} color="var(--brand-primary)" />
+            <h1 style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--text-primary)" }}>
               Discovered Evidence Vault
             </h1>
           </div>
-          <p style={{ fontSize: "0.82rem", color: "var(--text-secondary)", marginTop: "0.25rem" }}>
+          <p style={{ fontSize: "0.78rem", color: "var(--text-secondary)", marginTop: "0.15rem" }}>
             Read-only repository of external evidence discovered across RazorPulse investigations.
           </p>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
           <span
             style={{
-              fontSize: "0.75rem",
-              padding: "0.25rem 0.65rem",
+              fontSize: "0.72rem",
+              padding: "0.2rem 0.6rem",
               borderRadius: "var(--radius-pill)",
               fontWeight: 600,
-              backgroundColor: isDemoMode ? "rgba(245, 158, 11, 0.12)" : "rgba(37, 99, 235, 0.12)",
-              color: isDemoMode ? "#D97706" : "var(--accent-primary)",
-              border: isDemoMode ? "1px solid rgba(245, 158, 11, 0.3)" : "1px solid var(--accent-primary-border)",
+              backgroundColor: isDemoMode ? "var(--band-moderate-bg)" : "var(--brand-primary-subtle)",
+              color: isDemoMode ? "var(--band-moderate-text)" : "var(--brand-primary-text)",
+              border: isDemoMode ? "1px solid var(--band-moderate-border)" : "1px solid var(--brand-primary-border)",
             }}
           >
             {isDemoMode ? "Deterministic Demo Evidence" : "Live Investigation Evidence"}
@@ -102,79 +102,51 @@ export const EvidenceVault: React.FC<EvidenceVaultProps> = ({
       </div>
 
       {/* Filter & Search Bar Card */}
-      <div className="card" style={{ padding: "1.25rem 1.5rem" }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1.25rem" }}>
+      <div className="card" style={{ padding: "1.15rem" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "0.75rem", marginBottom: "1rem" }}>
           {/* Source Type Pills */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem" }}>
+          <div className="segmented-control">
             {sourceTypes.map((st) => (
               <button
                 key={st.id}
                 onClick={() => setSelectedSourceType(st.id)}
-                style={{
-                  padding: "0.3rem 0.75rem",
-                  borderRadius: "var(--radius-pill)",
-                  fontSize: "0.75rem",
-                  fontWeight: 600,
-                  border: "1px solid",
-                  borderColor: selectedSourceType === st.id ? "var(--accent-primary)" : "var(--border-subtle)",
-                  backgroundColor: selectedSourceType === st.id ? "var(--accent-primary-subtle)" : "#FFFFFF",
-                  color: selectedSourceType === st.id ? "var(--accent-primary)" : "var(--text-secondary)",
-                  cursor: "pointer",
-                  transition: "all var(--transition-fast)",
-                }}
+                className={`segmented-item ${selectedSourceType === st.id ? "active" : ""}`}
               >
                 {st.label}
               </button>
             ))}
           </div>
 
-          {/* Instant Search input */}
-          <div style={{ position: "relative", width: 300 }}>
+          {/* Search input */}
+          <div style={{ position: "relative", width: 280 }}>
             <Search size={14} style={{ position: "absolute", left: "0.75rem", top: "50%", transform: "translateY(-50%)", color: "var(--text-muted)" }} />
             <input
               type="text"
-              placeholder="Search evidence title, domain, snippet..."
+              placeholder="Search title, domain, snippet..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               style={{
                 width: "100%",
-                padding: "0.45rem 0.75rem 0.45rem 2.25rem",
+                height: 32,
+                padding: "0 0.75rem 0 2.25rem",
                 fontSize: "0.78rem",
-                borderRadius: "var(--radius-pill)",
+                borderRadius: "var(--radius-sm)",
                 border: "1px solid var(--border-subtle)",
-                backgroundColor: "var(--bg-app)",
+                backgroundColor: "var(--bg-input)",
                 outline: "none",
               }}
             />
-            {searchQuery && (
-              <button
-                onClick={() => setSearchQuery("")}
-                style={{
-                  position: "absolute",
-                  right: "0.6rem",
-                  top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "transparent",
-                  border: "none",
-                  fontSize: "0.75rem",
-                  cursor: "pointer",
-                  color: "var(--text-muted)",
-                }}
-              >
-                ✕
-              </button>
-            )}
           </div>
         </div>
 
-        {/* Evidence List */}
+        {/* Evidence items list */}
         {filtered.length === 0 ? (
           <EmptyState
             title="No evidence items found"
             description={
               items.length === 0
-                ? "No investigations have been completed yet. Run an investigation to discover and verify external public evidence."
-                : "No evidence items match your current search or source-type filter."
+                ? "No external evidence has been gathered yet. Trigger an investigation to begin discovery."
+                : "Adjust your search query or source filter to locate matching evidence items."
             }
             action={
               items.length > 0 ? (
@@ -187,131 +159,123 @@ export const EvidenceVault: React.FC<EvidenceVaultProps> = ({
                 >
                   Reset Filters
                 </button>
-              ) : null
+              ) : undefined
             }
           />
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
             {filtered.map((item, idx) => (
               <div
-                key={`${item.evidence_id}-${idx}`}
+                key={`${item.url}-${idx}`}
                 style={{
-                  padding: "1.25rem",
-                  backgroundColor: "var(--bg-surface-elevated)",
+                  padding: "0.95rem 1.15rem",
+                  backgroundColor: "var(--bg-surface)",
+                  borderRadius: "var(--radius-sm)",
                   border: "1px solid var(--border-subtle)",
-                  borderRadius: "var(--radius-md)",
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "0.45rem",
                   transition: "border-color var(--transition-fast)",
                 }}
               >
-                {/* Top header row */}
-                <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: "1rem" }}>
-                  <div>
-                    <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "0.35rem" }}>
-                      <span
-                        style={{
-                          fontSize: "0.7rem",
-                          fontWeight: 700,
-                          padding: "0.15rem 0.45rem",
-                          borderRadius: "var(--radius-sm)",
-                          backgroundColor: "rgba(37, 99, 235, 0.12)",
-                          color: "var(--accent-primary)",
-                          textTransform: "uppercase",
-                        }}
-                      >
-                        {item.source_type.replace("_", " ")}
-                      </span>
-
-                      <span style={{ fontSize: "0.75rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                        <Globe size={12} />
-                        {item.source_domain}
-                      </span>
-
-                      {item.merchantName && (
-                        <span style={{ fontSize: "0.75rem", color: "var(--text-secondary)", fontWeight: 600 }}>
-                          • {item.merchantName}
-                        </span>
-                      )}
-
-                      {item.published_at && (
-                        <span style={{ fontSize: "0.72rem", color: "var(--text-muted)", display: "flex", alignItems: "center", gap: "0.25rem" }}>
-                          <Calendar size={11} />
-                          {item.published_at.slice(0, 10)}
-                        </span>
-                      )}
-                    </div>
-
-                    <h3 style={{ fontSize: "0.98rem", fontWeight: 600, color: "var(--text-primary)" }}>
-                      {item.title || "External Source Document"}
-                    </h3>
+                {/* Header row */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: "1rem" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexWrap: "wrap" }}>
+                    <span
+                      style={{
+                        fontSize: "0.68rem",
+                        fontFamily: "var(--font-mono)",
+                        fontWeight: 700,
+                        backgroundColor: "var(--brand-primary-subtle)",
+                        color: "var(--brand-primary-text)",
+                        padding: "0.1rem 0.4rem",
+                        borderRadius: "var(--radius-xs)",
+                        border: "1px solid var(--brand-primary-border)",
+                      }}
+                    >
+                      [E{idx + 1}]
+                    </span>
+                    <span style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-primary)" }}>
+                      {item.title || "External Evidence Publication"}
+                    </span>
                   </div>
 
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", flexShrink: 0 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <span
+                      style={{
+                        fontSize: "0.68rem",
+                        textTransform: "capitalize",
+                        padding: "0.1rem 0.4rem",
+                        borderRadius: "var(--radius-pill)",
+                        backgroundColor: "var(--bg-app)",
+                        border: "1px solid var(--border-subtle)",
+                        color: "var(--text-secondary)",
+                      }}
+                    >
+                      {item.source_type.replace(/_/g, " ")}
+                    </span>
+
                     {item.investigationId && onViewDossier && (
                       <button
                         className="btn btn-secondary btn-sm"
                         onClick={() => onViewDossier(item.investigationId!)}
-                        style={{ fontSize: "0.75rem" }}
+                        title="View investigation dossier"
+                        style={{ height: "26px", fontSize: "0.7rem", padding: "0 0.5rem" }}
                       >
-                        <FileText size={12} />
-                        View Dossier
+                        <FileText size={11} />
+                        <span>Dossier</span>
                       </button>
                     )}
-
-                    <a
-                      href={item.url}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="btn btn-secondary btn-sm"
-                      style={{ fontSize: "0.75rem" }}
-                    >
-                      <ExternalLink size={12} />
-                      Visit Source
-                    </a>
                   </div>
+                </div>
+
+                {/* Domain & metadata row */}
+                <div style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: "0.72rem", color: "var(--text-muted)", flexWrap: "wrap" }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                    <Globe size={12} />
+                    <span style={{ fontWeight: 600, color: "var(--text-secondary)" }}>{item.source_domain}</span>
+                  </div>
+                  {item.published_at && (
+                    <div style={{ display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                      <Calendar size={12} />
+                      <span>{new Date(item.published_at).toLocaleDateString("en-IN")}</span>
+                    </div>
+                  )}
+                  {item.merchantName && (
+                    <span>
+                      Subject: <strong>{item.merchantName}</strong>
+                    </span>
+                  )}
                 </div>
 
                 {/* Content snippet */}
                 {item.content_snippet && (
-                  <div
+                  <p style={{ fontSize: "0.78rem", color: "var(--text-secondary)", lineHeight: 1.45, backgroundColor: "var(--bg-app)", padding: "0.6rem 0.75rem", borderRadius: "var(--radius-xs)", border: "1px solid var(--border-subtle)" }}>
+                    "{item.content_snippet}"
+                  </p>
+                )}
+
+                {/* Link */}
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", fontSize: "0.72rem" }}>
+                  <span style={{ color: "var(--text-muted)" }}>
+                    Discovery query: <code style={{ fontFamily: "var(--font-mono)", fontSize: "0.7rem" }}>{item.discovery_query}</code>
+                  </span>
+                  <a
+                    href={item.url}
+                    target="_blank"
+                    rel="noreferrer"
                     style={{
-                      fontSize: "0.82rem",
-                      color: "var(--text-secondary)",
-                      padding: "0.65rem 0.85rem",
-                      backgroundColor: "var(--bg-app)",
-                      borderLeft: "3px solid var(--accent-primary)",
-                      borderRadius: "var(--radius-sm)",
-                      margin: "0.65rem 0",
-                      fontStyle: "italic",
-                      lineHeight: 1.45,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.25rem",
+                      color: "var(--brand-primary)",
+                      fontWeight: 600,
+                      textDecoration: "none",
                     }}
                   >
-                    "{item.content_snippet}"
-                  </div>
-                )}
-
-                {/* Highlights */}
-                {item.highlights && item.highlights.length > 0 && (
-                  <div style={{ display: "flex", flexWrap: "wrap", gap: "0.35rem", marginTop: "0.4rem" }}>
-                    {item.highlights.map((h, i) => (
-                      <span
-                        key={i}
-                        style={{
-                          fontSize: "0.72rem",
-                          padding: "0.15rem 0.4rem",
-                          backgroundColor: "rgba(0, 0, 0, 0.04)",
-                          borderRadius: "var(--radius-sm)",
-                          color: "var(--text-secondary)",
-                        }}
-                      >
-                        • {h}
-                      </span>
-                    ))}
-                  </div>
-                )}
-
-                {/* Query intent metadata */}
-                <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginTop: "0.65rem" }}>
-                  Discovered via Exa query: <code style={{ color: "var(--text-secondary)" }}>{item.discovery_query}</code> ({item.discovery_query_intent})
+                    <span>Canonical Source</span>
+                    <ExternalLink size={11} />
+                  </a>
                 </div>
               </div>
             ))}

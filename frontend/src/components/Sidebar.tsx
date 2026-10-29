@@ -76,9 +76,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Brand Header */}
       <div>
         <div className="sidebar-header">
-          <div className="sidebar-brand" onClick={handleNavDashboard} style={{ cursor: "pointer" }}>
+          <div className="sidebar-brand" onClick={handleNavDashboard} title="RazorPulse Console Overview">
             <div className="brand-icon">
-              <Zap size={20} fill="#FFFFFF" color="#FFFFFF" />
+              <Zap size={17} fill="#FFFFFF" color="#FFFFFF" />
             </div>
             <div className="brand-info">
               <span className="brand-title">RazorPulse</span>
@@ -186,10 +186,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar Footer */}
       <div className="sidebar-footer">
-        {/* Status Card */}
+        {/* Status Module */}
         <div className="sidebar-status-card">
           <div className="status-card-header">
-            <span style={{ width: 8, height: 8, borderRadius: "50%", background: "#10B981", display: "inline-block" }} />
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--band-very-strong)", display: "inline-block" }} />
             <span>ECI v1.1 Engine Active</span>
           </div>
           <p className="status-card-desc">
@@ -200,15 +200,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
             onClick={onOpenSimulateModal}
             title="Ingest a simulated payment risk anomaly"
           >
-            <Plus size={13} style={{ display: "inline", verticalAlign: "middle", marginRight: 4 }} />
-            Simulate Anomaly
+            <Plus size={13} />
+            <span>Simulate Anomaly</span>
           </button>
         </div>
 
-        {/* Buildathon info */}
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0.4rem 0.5rem", fontSize: "0.75rem", color: "var(--text-muted)" }}>
+        {/* Buildathon attribution */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "0 0.25rem", fontSize: "0.72rem", color: "var(--text-muted)" }}>
           <span>Razorpay Buildathon</span>
-          <span style={{ fontWeight: 600 }}>v1.0.0</span>
+          <span style={{ fontWeight: 600, fontFamily: "var(--font-mono)" }}>v1.0.0</span>
         </div>
       </div>
     </aside>

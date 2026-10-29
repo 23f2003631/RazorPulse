@@ -117,11 +117,11 @@ export const SimulateAnomalyModal: React.FC<SimulateAnomalyModalProps> = ({
                 alignItems: "center",
                 gap: "0.5rem",
                 padding: "0.75rem",
-                backgroundColor: "rgba(59, 130, 246, 0.08)",
-                border: "1px solid var(--accent-primary-border)",
-                borderRadius: "var(--radius-md)",
+                backgroundColor: "var(--brand-primary-subtle)",
+                border: "1px solid var(--brand-primary-border)",
+                borderRadius: "var(--radius-sm)",
                 fontSize: "0.78rem",
-                color: "#93C5FD",
+                color: "var(--brand-primary-text)",
               }}
             >
               <AlertCircle size={16} style={{ flexShrink: 0 }} />

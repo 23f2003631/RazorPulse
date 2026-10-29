@@ -16,30 +16,30 @@ export const BandBadge: React.FC<BandBadgeProps> = ({ band, label }) => {
     case "very_strong":
       return (
         <span className="badge badge-very-strong">
-          <CheckCircle2 size={12} />
-          {label || "Very Strong Corroboration"}
+          <CheckCircle2 size={11} />
+          <span>{label || "Very Strong Corroboration"}</span>
         </span>
       );
     case "strong":
       return (
         <span className="badge badge-strong">
-          <CheckCircle2 size={12} />
-          {label || "Strong Corroboration"}
+          <CheckCircle2 size={11} />
+          <span>{label || "Strong Corroboration"}</span>
         </span>
       );
     case "moderate":
       return (
         <span className="badge badge-moderate">
-          <Clock size={12} />
-          {label || "Moderate Corroboration"}
+          <Clock size={11} />
+          <span>{label || "Moderate Corroboration"}</span>
         </span>
       );
     case "low":
     default:
       return (
         <span className="badge badge-low">
-          <AlertTriangle size={12} />
-          {label || "Low Corroboration"}
+          <AlertTriangle size={11} />
+          <span>{label || "Low Corroboration"}</span>
         </span>
       );
   }
@@ -61,7 +61,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     case "searching":
       return (
         <span className="badge badge-pending">
-          <Loader2 size={11} className="animate-spin" /> Searching
+          <Loader2 size={11} className="animate-spin" /> Discovery
         </span>
       );
     case "verifying":
@@ -78,7 +78,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       );
     case "pending":
       return (
-        <span className="badge badge-pending">
+        <span className="badge badge-neutral">
           <Clock size={11} /> Needs Investigation
         </span>
       );
@@ -102,23 +102,25 @@ export const ErrorBanner: React.FC<ErrorBannerProps> = ({ message, onRetry }) =>
   return (
     <div
       style={{
-        padding: "0.875rem 1.25rem",
+        padding: "0.75rem 1rem",
         backgroundColor: "var(--contradiction-bg)",
         border: "1px solid var(--contradiction-border)",
-        borderRadius: "var(--radius-md)",
+        borderRadius: "var(--radius-sm)",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
         gap: "1rem",
-        margin: "1rem 0",
+        margin: "0.75rem 0",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
-        <AlertTriangle size={18} color="var(--contradiction-color)" />
-        <span style={{ color: "var(--contradiction-text)", fontSize: "0.85rem", fontWeight: 500 }}>{message}</span>
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <AlertTriangle size={16} color="var(--contradiction-color)" style={{ flexShrink: 0 }} />
+        <span style={{ color: "var(--contradiction-text)", fontSize: "0.82rem", fontWeight: 500 }}>
+          {message}
+        </span>
       </div>
       {onRetry && (
-        <button onClick={onRetry} className="btn btn-secondary btn-sm">
+        <button onClick={onRetry} className="btn btn-secondary btn-sm" style={{ height: "26px", fontSize: "0.72rem" }}>
           Retry
         </button>
       )}
@@ -134,13 +136,13 @@ export const LoadingSpinner: React.FC<{ text?: string }> = ({ text = "Loading da
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        padding: "3rem 1rem",
-        gap: "0.75rem",
+        padding: "2.5rem 1rem",
+        gap: "0.5rem",
         color: "var(--text-secondary)",
       }}
     >
-      <Loader2 size={28} className="animate-spin" color="var(--accent-primary)" />
-      <span style={{ fontSize: "0.875rem" }}>{text}</span>
+      <Loader2 size={24} className="animate-spin" color="var(--brand-primary)" />
+      <span style={{ fontSize: "0.82rem", fontWeight: 500 }}>{text}</span>
     </div>
   );
 };
@@ -154,20 +156,53 @@ export const EmptyState: React.FC<{
     <div
       style={{
         textAlign: "center",
-        padding: "3.5rem 1.5rem",
+        padding: "2.5rem 1.5rem",
         backgroundColor: "var(--bg-surface)",
         border: "1px dashed var(--border-medium)",
-        borderRadius: "var(--radius-lg)",
+        borderRadius: "var(--radius-md)",
       }}
     >
-      <Info size={36} color="var(--text-muted)" style={{ margin: "0 auto 1rem auto" }} />
-      <h3 style={{ fontSize: "1rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "0.35rem" }}>
+      <Info size={28} color="var(--text-faint)" style={{ margin: "0 auto 0.75rem auto" }} />
+      <h3 style={{ fontSize: "0.95rem", fontWeight: 600, color: "var(--text-primary)", marginBottom: "0.25rem" }}>
         {title}
       </h3>
-      <p style={{ fontSize: "0.85rem", color: "var(--text-secondary)", maxWidth: "440px", margin: "0 auto 1.25rem auto" }}>
+      <p style={{ fontSize: "0.8rem", color: "var(--text-secondary)", maxWidth: "420px", margin: "0 auto 1rem auto", lineHeight: 1.45 }}>
         {description}
       </p>
-      {action}
+      {action && <div style={{ display: "inline-flex", justifyContent: "center" }}>{action}</div>}
     </div>
   );
 };
+
+/**
+ * Format currency in Indian numbering format (e.g. ₹7.25L, ₹32,000).
+ */
+export function formatIndianCurrency(amount?: number | null, currency: string = "INR"): string {
+  if (amount == null || isNaN(amount)) return "N/A";
+  const symbol = currency === "INR" ? "₹" : `${currency} `;
+  if (amount >= 10000000) {
+    const cr = (amount / 10000000).toFixed(2).replace(/\.00$/, "");
+    return `${symbol}${cr} Cr`;
+  }
+  if (amount >= 100000) {
+    const l = (amount / 100000).toFixed(2).replace(/\.00$/, "");
+    return `${symbol}${l}L`;
+  }
+  return `${symbol}${amount.toLocaleString("en-IN")}`;
+}
+
+/**
+ * Format velocity surge percentage cleanly with thousands grouping (e.g. +1,606%).
+ */
+export function formatVelocitySurge(pct?: number | null): string {
+  if (pct == null || isNaN(pct)) return "+0%";
+  const rounded = Math.round(pct);
+  return `+${rounded.toLocaleString("en-IN")}%`;
+}
+
+/**
+ * Format baseline multiplier with distinct baseline label (e.g. 17.1× baseline).
+ */
+export function formatMultiplier(multiplier: string | number): string {
+  return `${multiplier}× baseline`;
+}

@@ -152,7 +152,7 @@ export const DossierView: React.FC<DossierViewProps> = ({
         >
           <div className="kv-item">
             <span className="kv-label">Observed Velocity Surge</span>
-            <span className="kv-value" style={{ color: "#F87171", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+            <span className="kv-value" style={{ color: "#B91C1C", fontWeight: 700, display: "flex", alignItems: "center", gap: "0.3rem" }}>
               <Zap size={14} />
               +{anomaly?.percentage_change ? anomaly.percentage_change.toFixed(0) : "0"}%
             </span>
@@ -453,8 +453,9 @@ export const DossierView: React.FC<DossierViewProps> = ({
                           style={{
                             padding: "0.15rem 0.45rem",
                             borderRadius: "var(--radius-sm)",
-                            backgroundColor: "rgba(59, 130, 246, 0.2)",
-                            color: "var(--accent-primary)",
+                            backgroundColor: "var(--brand-primary-subtle)",
+                            color: "var(--brand-primary-text)",
+                            border: "1px solid var(--brand-primary-border)",
                             fontFamily: "var(--font-mono)",
                             fontSize: "0.72rem",
                             fontWeight: 700,
@@ -537,7 +538,8 @@ export const DossierView: React.FC<DossierViewProps> = ({
                           style={{
                             fontSize: "0.72rem",
                             padding: "0.15rem 0.4rem",
-                            backgroundColor: "rgba(255, 255, 255, 0.05)",
+                            backgroundColor: "var(--bg-app)",
+                            border: "1px solid var(--border-subtle)",
                             borderRadius: "var(--radius-sm)",
                             color: "var(--text-secondary)",
                           }}
@@ -601,8 +603,9 @@ export const DossierView: React.FC<DossierViewProps> = ({
                         fontSize: "0.72rem",
                         padding: "0.15rem 0.4rem",
                         borderRadius: "var(--radius-sm)",
-                        backgroundColor: "rgba(249, 115, 22, 0.2)",
-                        color: "#F97316",
+                        backgroundColor: "var(--exclusion-bg)",
+                        color: "var(--exclusion-text)",
+                        border: "1px solid var(--exclusion-border)",
                         fontWeight: 700,
                         fontFamily: "var(--font-mono)",
                       }}
@@ -613,7 +616,7 @@ export const DossierView: React.FC<DossierViewProps> = ({
                       Evidence ID: {ex.evidence_id.slice(0, 8)}...
                     </span>
                   </div>
-                  <div style={{ fontSize: "0.82rem", color: "#FED7AA", marginTop: "0.35rem" }}>
+                  <div style={{ fontSize: "0.82rem", color: "var(--exclusion-text)", marginTop: "0.35rem" }}>
                     {ex.explanation}
                   </div>
                 </div>
@@ -742,8 +745,8 @@ export const DossierView: React.FC<DossierViewProps> = ({
                         fontSize: "0.75rem",
                       }}
                     >
-                      <span style={{ color: "var(--accent-primary)" }}>Total Pipeline: </span>
-                      <strong style={{ color: "#93C5FD" }}>{metadata.total_duration_seconds}s</strong>
+                      <span style={{ color: "var(--brand-primary-text)" }}>Total Pipeline: </span>
+                      <strong style={{ color: "var(--brand-primary-text)" }}>{metadata.total_duration_seconds}s</strong>
                     </div>
                   )}
                 </div>

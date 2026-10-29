@@ -44,15 +44,15 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
 
   return (
     <header className="top-header">
-      {/* Title & Universal Live-as-You-Type Search */}
+      {/* Title & Universal Search */}
       <div className="header-title-wrap">
         <h1 className="header-title">Risk Investigation Console</h1>
         <div className="header-search">
-          <Search size={15} className="search-icon-left" />
+          <Search size={14} className="search-icon-left" />
           <input
             ref={searchInputRef}
             type="text"
-            placeholder="Search loaded merchants, anomaly types, IDs..."
+            placeholder="Search merchants, anomalies, IDs..."
             value={searchVal}
             onChange={(e) => onSearchChange(e.target.value)}
           />
@@ -61,7 +61,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               onClick={() => onSearchChange("")}
               style={{
                 position: "absolute",
-                right: "0.75rem",
+                right: "0.65rem",
                 top: "50%",
                 transform: "translateY(-50%)",
                 background: "transparent",
@@ -74,7 +74,7 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
               }}
               title="Clear search"
             >
-              <X size={14} />
+              <X size={13} />
             </button>
           ) : (
             <span className="search-kbd">⌘K</span>
@@ -85,11 +85,12 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
           <span
             style={{
               fontSize: "0.72rem",
-              padding: "0.2rem 0.5rem",
+              padding: "0.15rem 0.5rem",
               borderRadius: "var(--radius-pill)",
-              backgroundColor: "rgba(37, 99, 235, 0.1)",
-              color: "var(--accent-primary)",
+              backgroundColor: "var(--brand-primary-subtle)",
+              color: "var(--brand-primary)",
               fontWeight: 600,
+              border: "1px solid var(--brand-primary-border)",
             }}
           >
             {matchCount} match{matchCount === 1 ? "" : "es"}
@@ -101,43 +102,28 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
       <div className="header-actions">
         {/* Dynamic Queue Window Indicator */}
         <div className="header-badge-pill" title="Current risk anomaly ingestion window">
-          <Calendar size={14} color="var(--text-muted)" />
-          <span>Queue Window: Latest Recorded Anomalies</span>
+          <Calendar size={13} color="var(--text-muted)" />
+          <span>Queue Window: Latest Anomalies</span>
         </div>
 
         {/* Context-Aware Export Button */}
         {isDossierView ? (
           <button
-            className="header-btn-primary"
-            style={{
-              backgroundColor: "#FFFFFF",
-              color: "var(--text-primary)",
-              border: "1px solid var(--border-subtle)",
-              boxShadow: "var(--shadow-sm)",
-              opacity: hasActiveDossier ? 1 : 0.6,
-              cursor: hasActiveDossier ? "pointer" : "not-allowed",
-            }}
+            className="btn btn-secondary btn-sm"
             onClick={hasActiveDossier ? onExportDossier : undefined}
-            title={hasActiveDossier ? "Export active evidence dossier JSON & printable report" : "No active dossier to export"}
+            title={hasActiveDossier ? "Export active evidence dossier JSON" : "No active dossier to export"}
             disabled={!hasActiveDossier}
           >
-            <Download size={14} color="var(--text-secondary)" />
+            <Download size={13} color="var(--text-secondary)" />
             <span>Export Dossier</span>
           </button>
         ) : (
           <button
-            className="header-btn-primary"
-            style={{
-              backgroundColor: "#FFFFFF",
-              color: "var(--text-primary)",
-              border: "1px solid var(--border-subtle)",
-              boxShadow: "var(--shadow-sm)",
-              cursor: "pointer",
-            }}
+            className="btn btn-secondary btn-sm"
             onClick={onExportQueue}
             title="Export active anomaly queue and investigation status summary JSON"
           >
-            <Download size={14} color="var(--text-secondary)" />
+            <Download size={13} color="var(--text-secondary)" />
             <span>Export Queue Summary</span>
           </button>
         )}
@@ -157,17 +143,16 @@ export const TopHeader: React.FC<TopHeaderProps> = ({
         >
           <span
             style={{
-              width: 8,
-              height: 8,
+              width: 6,
+              height: 6,
               borderRadius: "50%",
-              backgroundColor: isBackendConnected ? "#10B981" : "#EF4444",
+              backgroundColor: isBackendConnected ? "var(--band-very-strong)" : "var(--contradiction-color)",
               display: "inline-block",
-              boxShadow: isBackendConnected ? "0 0 6px rgba(16, 185, 129, 0.6)" : "none",
             }}
           />
           <span
             style={{
-              fontSize: "0.75rem",
+              fontSize: "0.72rem",
               fontWeight: 600,
               color: isBackendConnected ? "var(--band-very-strong-text)" : "var(--contradiction-text)",
             }}
